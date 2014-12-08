@@ -97,7 +97,7 @@ for i in range(1000):
         for vs in range(len(tipni)):
             f.write(str(like_tip.iloc[vs])+ '\n')
             tipss = "".join([s for s in tipnis.splitlines(True) if s.strip("\r\n")])
-	    tipss = STOP.sub('', tipss)
+	    tipss = STOP.sub('', tipss.replace('\n', ' '))
             f.write(tipss +'\n')
     except:
         f.write('0\n')
@@ -112,7 +112,7 @@ for i in range(1000):
             f.write(str(likes.iloc[vals]['useful'])+'\n')
             r = Reviews.ix[ixx[vals]]
             revs = "".join([s for s in r.splitlines(True) if s.strip("\r\n")])
-	    revs = STOP.sub('', revs)
+	    revs = STOP.sub('', revs.replace('\n', ' '))
             f.write(revs+'\n')
 
     except:
