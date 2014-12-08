@@ -30,7 +30,7 @@ bus = bus[cols].set_index('business_id')
 idx = bus.index
 
 Rev = []
-for i in range(10000):
+for i in range(len(y)):
     Rev.append(json.loads(y[i]))
 rev = pd.DataFrame(Rev)
 col = ['business_id','text', 'votes']
@@ -38,7 +38,7 @@ rev = rev[col]
 g = rev.groupby(by = 'business_id').groups
 
 Tips = []
-for i in range(10000):
+for i in range(len(z)):
     Tips.append(json.loads(z[i]))
 tips = pd.DataFrame(Tips)
 col = ['business_id','text', 'likes']
@@ -47,7 +47,7 @@ t = tips.groupby(by = 'business_id').groups
 
 print 'Created Dataset to be written'
 
-for i in range(1000):
+for i in range(len(idx)):
     print 'Writing file ', idx[i] 
     attrs = []
     vals = bus.ix[idx[i]].values
