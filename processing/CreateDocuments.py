@@ -117,8 +117,10 @@ if __name__ == '__main__':
     print "Writing to: " + out_dir
     print ""
     if not file_or_dir.endswith(".json"):
+        if not out_dir.endswith('/'):
+            out_dir += '/'
         for filename in os.listdir(file_or_dir):
-            handle_file(filename)
+            handle_file(file_or_dir + filename)
     else:
         handle_file(file_or_dir)
 
