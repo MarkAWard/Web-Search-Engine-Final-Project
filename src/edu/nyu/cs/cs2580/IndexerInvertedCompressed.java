@@ -57,7 +57,7 @@ public class IndexerInvertedCompressed extends Indexer implements Serializable {
 	    private HashMap<Integer, Integer> elias = new HashMap<Integer,Integer>();
 	    private HashMap<Integer, BitSet > _postings=new HashMap<Integer,BitSet>();
 	    private Vector<Document> _documents=new Vector<Document>();
-	    
+	    private ReadCorpus DocReader = new ReadCorpus();
 	    private Map<Integer, Integer> _termCorpusFrequency =
 		new HashMap<Integer, Integer>();
 	    private Map<Integer, Integer> _termDocFrequency =
@@ -80,7 +80,7 @@ public class IndexerInvertedCompressed extends Indexer implements Serializable {
   @Override
   public void constructIndex() throws IOException {
 
-      ReadCorpus DocReader = new ReadCorpus();
+     
       
       String corpusDir = _options._corpusPrefix;
       System.out.println("Constructing index documents in: " + corpusDir);
@@ -111,7 +111,8 @@ public class IndexerInvertedCompressed extends Indexer implements Serializable {
 	      }
 	      else {
 		  //System.out.println(n_doc + "   " + fileEntry.getName());
-		  
+		 
+	
 	    String nextDoc = new Scanner(fileEntry).useDelimiter("\\Z").next();
 		processDocument(nextDoc);
 		  
@@ -148,8 +149,7 @@ public class IndexerInvertedCompressed extends Indexer implements Serializable {
 	
 	String indexFile = _options._indexPrefix +"/corpus.idx";
 	System.out.println("Store index to: " + indexFile);
-	ObjectOutputStream writer =
-	    new ObjectOutputStream(new FileOutputStream(indexFile));
+	ObjectOutputStream writer = new ObjectOutputStream(new FileOutputStream(indexFile));
 	
 	// temporary vectors
 	Vector<Integer> list = new Vector<Integer>();
@@ -319,7 +319,7 @@ public class IndexerInvertedCompressed extends Indexer implements Serializable {
     }
     
 	@SuppressWarnings("resource")
-	private void processDocument(String content) {
+	private void processDocument(String content) throws IOException {
 
 		
 		StringBuilder doc_string = new StringBuilder();
@@ -373,7 +373,10 @@ public class IndexerInvertedCompressed extends Indexer implements Serializable {
 			for(int j=0;j< Math.log(likes-1.0)*log_2;j++)
 				doc_string.append(text+" ");
 		}
-	document_tf = readTermVector(doc_string.toString(), uniqueTerms);	
+		
+	
+		
+	document_tf = readTermVector(DocReader.cleanAndStem(doc_string.toString()), uniqueTerms);	
 	s.close();
 
 	
@@ -443,6 +446,9 @@ public class IndexerInvertedCompressed extends Indexer implements Serializable {
 	while (s.hasNext()) {
 		
 	    String token = s.next();
+	    
+	    
+	    
 	    pos++;
 	    int idx = -1;
 	    
