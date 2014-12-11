@@ -9,7 +9,7 @@ To Do:
 4. Evaluation
   * Baseline, purely cosine similarity
   * Multiple rankers, comprehensive
-  * Rank with category features
+  * Rank with category features and Title features
   * Rank with/without repetition of text 
 5. Stemming
   * Handle "gooooood"
