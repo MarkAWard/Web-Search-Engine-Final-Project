@@ -112,9 +112,10 @@ if __name__ == '__main__':
         os.makedirs(out_dir)
     if not out_dir.endswith('/'):
         out_dir += '/'
-    print out_dir
-    sys.exit()
 
+    print "\nReading from: " + file_or_dir
+    print "Writing to: " + out_dir
+    print ""
     if not file_or_dir.endswith(".json"):
         for filename in os.listdir(file_or_dir):
             handle_file(filename)
@@ -127,18 +128,16 @@ if __name__ == '__main__':
     g = Reviews.groupby(by="business_id").groups
     t = Tips.groupby(by="business_id").groups
 
-    print 'Created Dataset to be written'
+    print '\nCreated Dataset to be written'
 
+    dups = []
     total = len(idx)
     for n, i in enumerate(xrange(len(idx))):
         
-        if n % 100 == 0 or n == (total - 1):
-            sys.stdout.write('\rWriting files: ' + str(round(float(n + 1)/total * 100,2)) + '%')
-            sys.stdout.flush()
-            if n == (total - 1):
-                print " ... Done"
-
         vals = Businesses.ix[idx[i]].values
+        if len(vals) != 8:
+            dups.append(" ".join([str(len(vals)), idx[i]]))
+            vals = vals[0]
 
         # ['name', 'latitude', 'longitude',  'stars', 'full_address', 'postcode', 'categories', 'attributes']
         name = vals[0]
@@ -149,7 +148,7 @@ if __name__ == '__main__':
         zips = vals[5]
         cats = vals[6]
         attr = vals[7]
-        Final_Cats = cats + attrs
+        Final_Cats = cats + attr
         
         with codecs.open(out_dir + idx[i] + '.txt', encoding='utf-8', mode='w') as f:
             f.write(idx[i]+'\n')
@@ -167,7 +166,7 @@ if __name__ == '__main__':
                 like_tips = Tips.iloc[t[idx[i]]]['likes']
                 assert len(like_tips) == len(text_tips)
                 f.write(str(len(text_tips))+'\n')
-                for like, text in zip(like_tips text_tips):
+                for like, text in zip(like_tips, text_tips):
                     f.write(str(int(like)) + '\n')
                     f.write(text)
             except:
@@ -177,14 +176,21 @@ if __name__ == '__main__':
                 like_revs = rev.iloc[g[idx[i]]]['votes']
                 assert len(like_revs) == len(text_revs)
                 f.write(str(len(text_revs))+'\n')
-                for like, text in zip(like_revs text_revs):
+                for like, text in zip(like_revs, text_revs):
                     f.write(str(int(like)) + '\n')
                     f.write(text)
             except:
                 f.write('0\n')
 
+        if n % 100 == 0 or n == (total - 1):
+            sys.stdout.write('\rWriting files: ' + str(round(float(n + 1)/total * 100,2)) + '%')
+            sys.stdout.flush()
+            if n == (total - 1):
+                print " ... Done"
 
-
+    print "\nList of duplicate files found: "
+    for it in list(set(dups)):
+        print it
 
 
 
