@@ -64,6 +64,7 @@ def read_reviews(filename):
     with open(filename, 'r') as fp:
         for i, line in enumerate(fp.readlines()):
             obj = json.loads(line)
+            obj['text'] = re.sub('\s+', ' ', obj['text']).strip()
             Reviews = Reviews.append(obj, ignore_index=True)
 
             if i % 1000 == 0 or i == (total - 1):
@@ -78,6 +79,7 @@ def read_tips(filename):
     with open(filename, 'r') as fp:
         for i, line in enumerate(fp.readlines()):
             obj = json.loads(line)
+            obj['text'] = re.sub('\s+', ' ', obj['text']).strip()
             Tips.append(obj, ignore_index=True)
 
             if i % 600 == 0 or i == (total - 1):
@@ -105,6 +107,14 @@ def file_len(filename):
 if __name__ == '__main__':
     
     file_or_dir = sys.argv[1]
+    out_dir = sys.argv[2]
+    if not os.path.exists(out_dir):
+        os.makedirs(out_dir)
+    if not out_dir.endswith('/'):
+        out_dir += '/'
+    print out_dir
+    sys.exit()
+
     if not file_or_dir.endswith(".json"):
         for filename in os.listdir(file_or_dir):
             handle_file(filename)
@@ -122,85 +132,57 @@ if __name__ == '__main__':
     total = len(idx)
     for n, i in enumerate(xrange(len(idx))):
         
-        if n % 200 == 0 or n == (total - 1):
+        if n % 100 == 0 or n == (total - 1):
             sys.stdout.write('\rWriting files: ' + str(round(float(n + 1)/total * 100,2)) + '%')
             sys.stdout.flush()
             if n == (total - 1):
                 print " ... Done"
 
-        attrs = []
-        vals = bus.ix[idx[i]].values
-# for i in range(len(idx)):
-#     print 'Writing file ', idx[i] 
-#     attrs = []
-#     vals = bus.ix[idx[i]].values
-    
-#     attr = vals[-1]
-#     attr_keys = attr.keys()
-#     attr_vals = attr.values()
-#     for k in attr_keys:
-#         if type(attr[k]) == bool:
-            
-#                 attrs.append(k)
-#         elif type(attr[k]) == dict:
-#             c = attr[k]
-#             for j in c.keys():
-#                 if c[j] == True:
-#                     attrs.append(j)
-#     cats = vals[-2]
-#     Final_Cats = cats + attrs
-    
-#     name = vals[0]
-#     lat = vals[1]
-#     longs = vals[2]
-#     stars = vals[3]
-#     addr = (vals[4])
-#     ad = STOP.sub('', addr.replace('\n',' '))
-    
-#     zips = vals[4].split()[-1] 
-    
-#     f = open('Yelp_text/'+idx[i]+'.txt', 'w')
-#     f.write(idx[i]+'\n')
-#     f.write(name+'\n')
-#     f.write(str(lat)+'\n')
-#     f.write(str(longs)+'\n')
-#     f.write(str(stars)+'\n')
-#     f.write(ad+'\n')
-#     f.write(zips+'\n')
-#     f.write(str(len(Final_Cats))+'\n')
-#     for cats in Final_Cats:
-#         f.write(cats+'\n')
-    
-    
-#     try:
-	
-#         f.write(str(len(tipni))+'\n')
-#         print len(tipni)
-#         like_tip = tips.iloc[t[idx[i]]]['likes']       
-#         for vs in range(len(tipni)):
-#             f.write(str(like_tip.iloc[vs])+ '\n')
-#             tipss = "".join([s for s in tipnis.splitlines(True) if s.strip("\r\n")])
-#	    tipss = STOP.sub('', tipss.replace('\n', ' '))
-#             f.write(tipss +'\n')
-#     except:
-#         f.write('0\n')
-#     try:
-#         Reviews = rev.iloc[g[idx[i]]]['text']
-#         like = []
-#         likes = rev.iloc[g[idx[i]]]['votes']
-#         f.write(str(len(Reviews))+'\n')
-        
-#         ixx = Reviews.index
-#         for vals in range(len(Reviews)):
-#             f.write(str(likes.iloc[vals]['useful'])+'\n')
-#             r = Reviews.ix[ixx[vals]]
-#             revs = "".join([s for s in r.splitlines(True) if s.strip("\r\n")])
-#	    revs = STOP.sub('', revs.replace('\n', ' '))
-#             f.write(revs+'\n')
+        vals = Businesses.ix[idx[i]].values
 
-#     except:
-#         f.write('0\n')
-#     f.close()
+        # ['name', 'latitude', 'longitude',  'stars', 'full_address', 'postcode', 'categories', 'attributes']
+        name = vals[0]
+        lat = vals[1]
+        longs = vals[2]
+        stars = vals[3]
+        addr = vals[4]
+        zips = vals[5]
+        cats = vals[6]
+        attr = vals[7]
+        Final_Cats = cats + attrs
+        
+        with codecs.open(out_dir + idx[i] + '.txt', encoding='utf-8', mode='w') as f:
+            f.write(idx[i]+'\n')
+            f.write(name+'\n')
+            f.write(str(lat)+'\n')
+            f.write(str(longs)+'\n')
+            f.write(str(stars)+'\n')
+            f.write(addr+'\n')
+            f.write(zips+'\n')
+            f.write(str(len(Final_Cats))+'\n')
+            for cats in Final_Cats:
+                f.write(cats+'\n')
+            try:
+                text_tips = Tips.iloc[t[idx[i]]]['text']
+                like_tips = Tips.iloc[t[idx[i]]]['likes']
+                assert len(like_tips) == len(text_tips)
+                f.write(str(len(text_tips))+'\n')
+                for like, text in zip(like_tips text_tips):
+                    f.write(str(int(like)) + '\n')
+                    f.write(text)
+            except:
+                f.write('0\n')
+            try:
+                text_revs = rev.iloc[g[idx[i]]]['text']
+                like_revs = rev.iloc[g[idx[i]]]['votes']
+                assert len(like_revs) == len(text_revs)
+                f.write(str(len(text_revs))+'\n')
+                for like, text in zip(like_revs text_revs):
+                    f.write(str(int(like)) + '\n')
+                    f.write(text)
+            except:
+                f.write('0\n')
+
 
 
 
