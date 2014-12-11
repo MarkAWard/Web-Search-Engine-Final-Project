@@ -12,4 +12,5 @@ To Do:
   * Rank with category features
   * Rank with/without repetition of text 
 5. Stemming
-  * Handle "gooooood" 
+  * Handle "gooooood"
+6. Category expansion. Medical -> Medical, Doctor etc
