@@ -20,7 +20,6 @@ import java.util.Vector;
 import java.util.Comparator;
 import java.util.ArrayList;
 
-import jdk.nashorn.internal.runtime.regexp.joni.ast.ConsAltNode;
 
 import com.google.common.collect.HashBiMap;
 
