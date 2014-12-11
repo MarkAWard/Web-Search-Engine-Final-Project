@@ -6,6 +6,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.Vector;
 
 /**
  * The basic implementation of a Document.  Only the most basic information are
@@ -75,7 +76,7 @@ class Document implements Serializable {
   private String _address="";
   private Double _stars=0.0;
   private Double _zip=0.0;
-  
+  private Vector<String> _categories = new Vector<String>();
   
 
   public Document(int docid) {
@@ -160,5 +161,13 @@ public Double get_zip() {
 
 public void set_zip(Double _zip) {
 	this._zip = _zip;
+}
+
+public Vector<String> get_categories() {
+	return _categories;
+}
+
+public void set_categories(Vector<String> _categories) {
+	this._categories = _categories;
 }
 }
