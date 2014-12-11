@@ -20,6 +20,8 @@ import java.util.Vector;
 import java.util.Comparator;
 import java.util.ArrayList;
 
+import jdk.nashorn.internal.runtime.regexp.joni.ast.ConsAltNode;
+
 import com.google.common.collect.HashBiMap;
 
 import edu.nyu.cs.cs2580.SearchEngine.Options;
@@ -29,9 +31,11 @@ import edu.nyu.cs.cs2580.SearchEngine.Options;
  */
 public class IndexerInvertedCompressed extends Indexer implements Serializable {
 
-  public static class Tuple<T, R> {
+	private final Double log_2 = 1/Math.log(2.0); 
+	public static class Tuple<T, R> {
     private T first;
     private R second;
+    
 
     public Tuple(T t, R r) {
       this.first = t;
@@ -65,7 +69,7 @@ public class IndexerInvertedCompressed extends Indexer implements Serializable {
 	    private HashMap<Integer,Vector<Integer>> _skip_pointer=new HashMap<Integer,Vector<Integer>>();
 	    private HashMap<Integer,Vector<Integer>> _term_list=new HashMap<Integer,Vector<Integer>>();
 
-      private StopWords _StopWords = null;
+	    private StopWords _StopWords = null;
 	    
 	
   public IndexerInvertedCompressed(Options options) throws IOException, ClassNotFoundException {
@@ -97,7 +101,6 @@ public class IndexerInvertedCompressed extends Indexer implements Serializable {
 		  try {
 		      String line = null;
 		      while ((line = reader.readLine()) != null) {
-			  //System.out.println("Document" + n_doc);
 			  line = DocReader.createFileInput(line);
 			  processDocument(line);
 			  _term_position.clear();
@@ -319,8 +322,8 @@ public class IndexerInvertedCompressed extends Indexer implements Serializable {
 	@SuppressWarnings("resource")
 	private void processDocument(String content) {
 
-		StringBuilder category_string = new StringBuilder();
-		StringBuilder review_string = new StringBuilder();
+		
+		StringBuilder doc_string = new StringBuilder();
 		Scanner s = new Scanner(content).useDelimiter("\n");
 		Set<Integer> uniqueTerms = new HashSet<Integer>();
 		HashMap<Integer, Integer> document_tf = new HashMap<Integer, Integer>();
@@ -334,7 +337,7 @@ public class IndexerInvertedCompressed extends Indexer implements Serializable {
 		String address = s.next();
 		Double zip = s.nextDouble();
 
-		category_string.append(title+" ");
+		doc_string.append(title+" ");
 		
 		int t1_size = s.nextInt();
 		Vector<String> t1_terms = new Vector<String>();
@@ -343,43 +346,35 @@ public class IndexerInvertedCompressed extends Indexer implements Serializable {
 		{
 			category=s.next();
 			t1_terms.add(category);
-			category_string.append(category + " ");
+			doc_string.append(category + " ");
 		}
+		
+		
 		
 		int t2_size=s.nextInt();
 		String text="";
 		Integer likes;
-		Vector<Tuple<Integer,String >> t2_terms = new Vector<Tuple<Integer,String >>();
+		
+		
 		for(int i=0;i<t2_size;i++)
 		{
 			likes=s.nextInt();
 			text=s.next();
-			t2_terms.add(new Tuple<Integer, String>(likes, text));
-			review_string.append(text+" ");
+			doc_string.append(text+" ");
+			for(int j=0;j< Math.log(likes-1.0)*log_2;j++)
+				doc_string.append(text+" ");
 		}
 		
 		int t3_size = s.nextInt();
-		Vector<Tuple<Integer,String >> t3_terms = new Vector<Tuple<Integer,String >>();
 		for(int i=0;i<t3_size;i++)
 		{
 			likes=s.nextInt();
 			text=s.next();
-			t3_terms.add(new Tuple<Integer, String>(likes,text));
-			review_string.append(text+" ");
+			doc_string.append(text+" ");
+			for(int j=0;j< Math.log(likes-1.0)*log_2;j++)
+				doc_string.append(text+" ");
 		}
-
-		
-
-		System.out.println(category_string);
-	
-	// pass the body
-	//document_tf = readTermVector(s.next(), uniqueTerms);
-  //Tuple<BitSet, Integer> doctf_bits = convertToBitSet(document_tf, _options._keepTerms);
-	
-	//Integer.parseInt(s.next());
-
-	//String url = s.next();
-	
+	document_tf = readTermVector(doc_string.toString(), uniqueTerms);	
 	s.close();
 
 	
@@ -395,51 +390,48 @@ public class IndexerInvertedCompressed extends Indexer implements Serializable {
 	doc.set_stars(stars);
 	doc.set_address(address);
 	doc.set_zip(zip);
+	doc.set_categories(t1_terms);
 	
 	_documents.add(doc);
 	_numDocs++;
 	
 
-//    doc.saveTopWords(doctf_bits.getFirst(), doctf_bits.getSecond());
-//	((DocumentIndexed) doc).removeAll();
-//	// add the document
-//	_documents.add(doc); 
-//	_numDocs++;
-//	
-//	// create postings lists and skip pointers
-//	Vector<Integer> positions=new Vector<Integer>();
-//	Vector<Integer> list=new Vector<Integer>();
-//	Vector<Integer> skip=new Vector<Integer>();
-//	for (Integer idx : uniqueTerms) {
-//	    // increase number of docs this term appears in
-//	    _termDocFrequency.put(idx, _termDocFrequency.get(idx) + 1);
-//
-//	    // get the vectors
-//	    skip = _skip_pointer.get(idx);
-//	    list = _term_list.get(idx);
-//	    positions = _term_position.get(idx);
-//	    
-//	   // System.out.println(_dictionary.get(idx));
-//	  //  positions=delta_encode(positions,idx);
-//	    
-//	    // add document ID
-//	    list.add(_documents.size()-1);
-//	    // add number of occurrences
-//	    list.add(positions.size());
-//	    // add all the positions in the document
-//	    
-//	    list.addAll(positions);
-//	    
-//	    // add document ID
-//	    skip.add(_documents.size()-1);
-//	    // add how far to skip to the last element of this documents list
-//	    skip.add(list.size()-1);
-//	    
-//	    // set it
-//	    _skip_pointer.put(idx, skip);
-//	    _term_list.put(idx, list);
-//	    
-//	}
+	((DocumentIndexed) doc).removeAll();
+
+	
+	// create postings lists and skip pointers
+	
+	Vector<Integer> positions=new Vector<Integer>();
+	Vector<Integer> list=new Vector<Integer>();
+	Vector<Integer> skip=new Vector<Integer>();
+	
+	for (Integer idx : uniqueTerms) {
+	    // increase number of docs this term appears in
+	    _termDocFrequency.put(idx, _termDocFrequency.get(idx) + 1);
+
+	    // get the vectors
+	    skip = _skip_pointer.get(idx);
+	    list = _term_list.get(idx);
+	    positions = _term_position.get(idx);
+	    
+	    // add document ID
+	    list.add(_documents.size()-1);
+	    // add number of occurrences
+	    list.add(positions.size());
+	    // add all the positions in the document
+	    
+	    list.addAll(positions);
+	    
+	    // add document ID
+	    skip.add(_documents.size()-1);
+	    // add how far to skip to the last element of this documents list
+	    skip.add(list.size()-1);
+	    
+	    // set it
+	    _skip_pointer.put(idx, skip);
+	    _term_list.put(idx, list);
+	    
+	}
 	
     }
   
