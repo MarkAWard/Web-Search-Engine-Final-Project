@@ -11,4 +11,4 @@ To Do:
   * Multiple rankers, comprehensive
   * Rank with category features
 5. Stemming
-  *Handle "gooooood" 
+  * Handle "gooooood" 
