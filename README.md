@@ -7,7 +7,7 @@ To Do:
 2. Try QL for ranker
 3. Handle canada UK zip codes
 4. Evaluation
-..- Baseline, purely cosine similarity
+..1. Baseline, purely cosine similarity
 ⋅⋅- Multiple rankers, comprehensive
 ⋅⋅- Rank with category features
 5. Stemming
