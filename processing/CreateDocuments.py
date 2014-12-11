@@ -4,6 +4,7 @@ import re
 import json
 import pandas as pd
 import subprocess
+import codecs
 
 Businesses = pd.DataFrame(columns=['business_id', 'name', 'latitude', 'longitude',  'stars', 'full_address', 'postcode', 'categories', 'attributes'])
 Reviews = pd.DataFrame(columns=['business_id','text', 'votes'])
@@ -110,40 +111,25 @@ if __name__ == '__main__':
     else:
         handle_file(file_or_dir)
 
-#    print Businesses.ix[:,['full_address']]
-#    print Reviews
-#    print Tips
+    Businesses.set_index('business_id', inplace=True)
+    idx = Businesses.index
 
+    g = Reviews.groupby(by="business_id").groups
+    t = Tips.groupby(by="business_id").groups
 
+    print 'Created Dataset to be written'
 
-# STOP = re.compile(r'[^\x00-\x7F]+')
+    total = len(idx)
+    for n, i in enumerate(xrange(len(idx))):
+        
+        if n % 200 == 0 or n == (total - 1):
+            sys.stdout.write('\rWriting files: ' + str(round(float(n + 1)/total * 100,2)) + '%')
+            sys.stdout.flush()
+            if n == (total - 1):
+                print " ... Done"
 
-# Bus = []
-# for i in range(len(x)):
-#     Bus.append(json.loads(x[i]))
-# bus = pd.DataFrame(Bus)
-# cols =['business_id', 'name', 'latitude', 'longitude',  'stars', 'full_address','categories', 'attributes']   
-# bus = bus[cols].set_index('business_id')
-# idx = bus.index
-
-# Rev = []
-# for i in range(len(y)):
-#     Rev.append(json.loads(y[i]))
-# rev = pd.DataFrame(Rev)
-# col = ['business_id','text', 'votes']
-# rev = rev[col]
-# g = rev.groupby(by = 'business_id').groups
-
-# Tips = []
-# for i in range(len(z)):
-#     Tips.append(json.loads(z[i]))
-# tips = pd.DataFrame(Tips)
-# col = ['business_id','text', 'likes']
-# tips = tips[col]
-# t = tips.groupby(by = 'business_id').groups
-
-# print 'Created Dataset to be written'
-
+        attrs = []
+        vals = bus.ix[idx[i]].values
 # for i in range(len(idx)):
 #     print 'Writing file ', idx[i] 
 #     attrs = []
