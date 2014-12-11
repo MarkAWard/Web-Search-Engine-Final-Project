@@ -111,12 +111,11 @@ public class IndexerInvertedCompressed extends Indexer implements Serializable {
 	      }
 	      else {
 		  //System.out.println(n_doc + "   " + fileEntry.getName());
-		 
-	
+		  
+		  System.out.println(fileEntry);
 	    String nextDoc = new Scanner(fileEntry).useDelimiter("\\Z").next();
 		processDocument(nextDoc);
-		  
-		  _term_position.clear();
+		_term_position.clear();
 		  
 	      }
 	  } 
@@ -334,7 +333,7 @@ public class IndexerInvertedCompressed extends Indexer implements Serializable {
 		Double longi = s.nextDouble();
 		Double stars = s.nextDouble();
 		String address = s.next();
-		Double zip = s.nextDouble();
+		String zip = s.next();
 
 		doc_string.append(title+" ");
 		
@@ -360,20 +359,22 @@ public class IndexerInvertedCompressed extends Indexer implements Serializable {
 			likes=s.nextInt();
 			text=s.next();
 			doc_string.append(text+" ");
-			for(int j=0;j< Math.log(likes-1.0)*log_2;j++)
+			if (likes >= 4) {
+			    for(int j=0;j< Math.log(likes)*log_2 - 1 ;j++)
 				doc_string.append(text+" ");
+			}
 		}
-		
 		int t3_size = s.nextInt();
 		for(int i=0;i<t3_size;i++)
 		{
 			likes=s.nextInt();
 			text=s.next();
 			doc_string.append(text+" ");
-			for(int j=0;j< Math.log(likes-1.0)*log_2;j++)
+			if (likes >= 4) {
+			    for(int j=0;j< Math.log(likes+1)*log_2 - 1 ;j++)
 				doc_string.append(text+" ");
+			}
 		}
-		
 	
 		
 	document_tf = readTermVector(DocReader.cleanAndStem(doc_string.toString()), uniqueTerms);	
@@ -396,7 +397,7 @@ public class IndexerInvertedCompressed extends Indexer implements Serializable {
 	
 	_documents.add(doc);
 	_numDocs++;
-	
+	System.out.println(_numDocs + " " + business_id);
 
 	((DocumentIndexed) doc).removeAll();
 
@@ -406,11 +407,13 @@ public class IndexerInvertedCompressed extends Indexer implements Serializable {
 	Vector<Integer> positions=new Vector<Integer>();
 	Vector<Integer> list=new Vector<Integer>();
 	Vector<Integer> skip=new Vector<Integer>();
-	
+
+
 	for (Integer idx : uniqueTerms) {
+	    
 	    // increase number of docs this term appears in
 	    _termDocFrequency.put(idx, _termDocFrequency.get(idx) + 1);
-
+	    
 	    // get the vectors
 	    skip = _skip_pointer.get(idx);
 	    list = _term_list.get(idx);
@@ -434,7 +437,7 @@ public class IndexerInvertedCompressed extends Indexer implements Serializable {
 	    _term_list.put(idx, list);
 	    
 	}
-	
+
     }
   
     private HashMap<Integer, Integer> readTermVector(String content, Set <Integer> uniques) {

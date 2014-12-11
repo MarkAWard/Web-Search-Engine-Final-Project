@@ -75,7 +75,7 @@ class Document implements Serializable {
   private Double _longi=0.0;
   private String _address="";
   private Double _stars=0.0;
-  private Double _zip=0.0;
+  private String _zip="";
   private Vector<String> _categories = new Vector<String>();
   
 
@@ -155,11 +155,11 @@ public void set_stars(Double _stars) {
 	this._stars = _stars;
 }
 
-public Double get_zip() {
+public String get_zip() {
 	return _zip;
 }
 
-public void set_zip(Double _zip) {
+public void set_zip(String _zip) {
 	this._zip = _zip;
 }
 
