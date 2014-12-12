@@ -1,31 +1,49 @@
+import sys
+import os
 import pandas as pd
 import json
 import re
+import codecs
 
-print 'Reading Business Data'
-f = open('yelp_academic_dataset_business.json', 'r')
-x = f.readlines()
-f.close()
+POSTCODE = re.compile("\d{5}(?:[-\s]\d{4})?|[A-Z]{1,2}[0-9R][0-9A-Z]?\s+[0-9][ABD-HJLNP-UW-Z]{2}|[ABCEGHJKLMNPRSTVXY]{1}\d{1}[A-Z]{1} *\d{1}[A-Z]{1}\d{1}")
+WHITESPACE = re.compile("\s+")
 
-print 'Reading Tips'
-f = open('yelp_academic_dataset_tip.json', 'r')
-z = f.readlines()
-f.close()
+if __name__ == '__main__':
+    
+    in_dir = sys.argv[1]
+    out_dir = sys.argv[2]
+    if not os.path.exists(out_dir):
+        os.makedirs(out_dir)
+    if not out_dir.endswith('/'):
+        out_dir += '/'
+    if not in_dir.endswith('/'):
+        in_dir += '/'
 
-print 'Reading Reviews'
-f = open('yelp_academic_dataset_review.json', 'r')
-y = f.readlines()
-f.close()
-
-
-
-STOP = re.compile(r'[^\x00-\x7F]+')
+    print "\nReading input files from: " + file_or_dir
+    print "Output directory: " + out_dir
+    print ""
+    for filename in os.listdir(file_or_dir):
+        if filename.find('business') > -1:
+            print 'Reading Business Data'
+            f = open(file_or_dir + filename, 'r')
+            x = f.readlines()
+            f.close()
+        if filename.find('tip') > -1:
+            print 'Reading Tips'
+            f = open(file_or_dir + filename, 'r')
+            z = f.readlines()
+            f.close()
+        if filename.find('review') > -1:
+            print 'Reading Reviews'
+            f = open(file_or_dir + filename, 'r')
+            y = f.readlines()
+            f.close()
 
 Bus = []
 for i in range(len(x)):
     Bus.append(json.loads(x[i]))
 bus = pd.DataFrame(Bus)
-cols =['business_id', 'name', 'latitude', 'longitude',  'stars', 'full_address','categories', 'attributes']   
+cols =['business_id', 'name', 'latitude', 'longitude',  'stars', 'full_address', 'city', 'categories', 'attributes', 'url']   
 bus = bus[cols].set_index('business_id')
 idx = bus.index
 
@@ -47,52 +65,74 @@ t = tips.groupby(by = 'business_id').groups
 
 print 'Created Dataset to be written'
 
-for i in range(len(idx)):
-    print 'Writing file ', idx[i] 
-    attrs = []
-    vals = bus.ix[idx[i]].values
-    
-    attr = vals[-1]
-    attr_keys = attr.keys()
-    attr_vals = attr.values()
-    for k in attr_keys:
-        if type(attr[k]) == bool:
-            
-                attrs.append(k)
-        elif type(attr[k]) == dict:
-            c = attr[k]
-            for j in c.keys():
-                if c[j] == True:
-                    attrs.append(j)
-    cats = vals[-2]
-    Final_Cats = cats + attrs
-    
+total = len(idx)
+for n, i in enumerate(xrange(total)):
+    print '%d of %d: %s' %(n, total, str(idx[i])) 
+
+#   0         1            2           3           4           5          6            7           8 
+# [name', 'latitude', 'longitude',  'stars', 'full_address', 'city', 'categories', 'attributes', 'url'] 
+    vals = bus.ix[idx[i]].values    
     name = vals[0]
     lat = vals[1]
     longs = vals[2]
     stars = vals[3]
-    addr = (vals[4])
-    ad = STOP.sub('', addr.replace('\n',' '))
+    addr = vals[4]
+    city = vals[5]
+    cats = vals[6]
+    attr = vals[7]
+    url = vals[8]
+
+    attrs = []
+    mapping = ["cheap", "moderate", "moderate", "expensive"]
+    for key, val in attr.items():
+        if isinstance(val, bool):
+            if val:
+                attrs.append(key)
+        elif isinstance(val, str) or isinstance(val, unicode):
+            attrs.append(key + ' ' + val)
+        elif isinstance(val, dict):
+            arr = []
+            for k, v in val.items():
+                if isinstance(v, bool):
+                    if v:
+                        arr.append(k)
+                elif isinstance(v, str) or isinstance(v, unicode):
+                    arr.append(k + ' ' + v)
+                else:
+                    pass
+            attrs.extend([key + ' ' + v for v in arr])
+        elif isinstance(val, int) and key.lower().find("price") > -1:
+            attrs.append(key + " " + mapping[val-1] + " " + "$"*val)
+        else:
+            pass
+
+    Final_Cats = cats + attrs
+
+    ad = WHITESPACE.sub(' ', addr).strip()
     
-    zips = vals[4].split()[-1] 
+    postcode = POSTCODE.findall(ad)
+    if postcode:
+        zips =  postcode[-1]
+    else:
+        zips = ""
     
-    f = open('Yelp_text/'+idx[i]+'.txt', 'w')
+    f = codecs.open(out_dir + idx[i] + '.txt', encoding='utf-8', mode='w')
     f.write(idx[i]+'\n')
+    f.write(str(city)+'\n')
     f.write(name+'\n')
     f.write(str(lat)+'\n')
     f.write(str(longs)+'\n')
     f.write(str(stars)+'\n')
     f.write(ad+'\n')
+    f.write(city+'\n')
     f.write(zips+'\n')
     f.write(str(len(Final_Cats))+'\n')
     for cats in Final_Cats:
         f.write(cats+'\n')
     
-    
     try:
-	
+        tipni = tips.iloc[t[idx[i]]]['text']
         f.write(str(len(tipni))+'\n')
-        print len(tipni)
         like_tip = tips.iloc[t[idx[i]]]['likes']       
         for vs in range(len(tipni)):
             f.write(str(like_tip.iloc[vs])+ '\n')
