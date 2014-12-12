@@ -321,7 +321,7 @@ public class IndexerInvertedCompressed extends Indexer implements Serializable {
 		if (url.equals("nan")) {
 			String suffix = title.replaceAll("[^a-zA-Z ]", "").toLowerCase()
 					.replaceAll(" ", "-")
-					+ "-" + city.toLowerCase();
+					+ "-" + city.replaceAll("[^a-zA-Z ]", "").toLowerCase().replaceAll(" ", "-");
 			url = "http://www.yelp.com/biz/" + suffix;
 		} else {
 			doc.setUrl(url);
