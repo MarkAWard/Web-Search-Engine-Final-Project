@@ -79,6 +79,7 @@ class Document implements Serializable {
 	private String _zip = "";
 	private String _city = "";
 	private Vector<String> _categories = new Vector<String>();
+	private Integer _num_Reviews=0;
 
 	public Document(int docid) {
 		_docid = docid;
@@ -178,6 +179,14 @@ class Document implements Serializable {
 
 	public void setCity(String city) {
 		this._city = city;
+	}
+
+	public Integer get_num_Reviews() {
+		return _num_Reviews;
+	}
+
+	public void set_num_Reviews(Integer _num_Reviews) {
+		this._num_Reviews = _num_Reviews;
 	}
 
 }

@@ -291,20 +291,21 @@ public class IndexerInvertedCompressed extends Indexer implements Serializable {
 			likes = s.nextInt();
 			text = s.next();
 			doc_string.append(text + " ");
-			if (likes >= 4) {
-				for (int j = 0; j < Math.log(likes) * log_2 - 1; j++)
-					doc_string.append(text + " ");
-			}
+//			if (likes >= 4) {
+//				for (int j = 0; j < Math.log(likes) * log_2 - 1; j++)
+//					doc_string.append(text + " ");
+//			}
 		}
 		int t3_size = s.nextInt();
+		
 		for (int i = 0; i < t3_size; i++) {
 			likes = s.nextInt();
 			text = s.next();
 			doc_string.append(text + " ");
-			if (likes >= 4) {
-				for (int j = 0; j < Math.log(likes + 1) * log_2 - 1; j++)
-					doc_string.append(text + " ");
-			}
+//			if (likes >= 4) {
+//				for (int j = 0; j < Math.log(likes + 1) * log_2 - 1; j++)
+//					doc_string.append(text + " ");
+//			}
 		}
 
 		document_tf = readTermVector(
@@ -327,6 +328,7 @@ public class IndexerInvertedCompressed extends Indexer implements Serializable {
 			doc.setUrl(url);
 		}
 
+		doc.set_num_Reviews(t3_size);
 		doc.setTitle(title);
 		doc.set_lati(lati);
 		doc.set_longi(longi);
