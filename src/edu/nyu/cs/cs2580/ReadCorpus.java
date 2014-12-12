@@ -104,7 +104,7 @@ public class ReadCorpus {
 		body = body.replaceAll("[" + Pattern.quote(charsToDel)  + "]", " ");
 
 		// gooooood --> good
-		body = body.replaceAll("([a-zA-Z])(\\1{2,})", "$1$1"));
+		body = body.replaceAll("([a-zA-Z])(\\1{2,})", "$1$1");
 
 		StringBuilder out = new StringBuilder();
 		char[] w = new char[501];
