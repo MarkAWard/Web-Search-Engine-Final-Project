@@ -31,52 +31,34 @@ if __name__ == '__main__':
             bus = bus[bcols]
             bus = bus.set_index('business_id')
             idx = bus.index            
-#            f = open(in_dir + filename, 'r')
-#            x = f.readlines()
-#            f.close()
+
         if filename.find('tip') > -1:
             print 'Reading Tips'
             tcols = ['business_id','text', 'likes']
             tips = pd.read_json(in_dir + filename)
             tips = tips[tcols]
             t = tips.groupby(by='business_id').groups
-#            f = open(in_dir + filename, 'r')
-#            z = f.readlines()
-#            f.close()
+
         if filename.find('review') > -1:
             print 'Reading Reviews ' + filename
             f = open(in_dir + filename, 'r')
             R += f.readlines()
             f.close()
 
-# Bus = []
-# for i in range(len(x)):
-#     Bus.append(json.loads(x[i]))
-# bcols =['business_id', 'name', 'latitude', 'longitude',  'stars', 'full_address', 'city', 'categories', 'attributes', 'url']   
-# bus = pd.DataFrame(data=Bus, columns=bcols)
-# bus = bus.set_index('business_id')
-# idx = bus.index
 
 Rev = []
 for i in range(len(R)):
     Rev.append(json.loads(R[i]))
 rcols = ['business_id','text', 'votes', 'review_id']
 rev = pd.DataFrame(data=Rev, columns=rcols)
-rev.drop_duplicates(subset=['review_id'], inplace=True)
-g = rev.groupby(by = 'business_id').groups
+rev.drop_duplicates(cols=['review_id'], inplace=True)
+g = rev.groupby(by='business_id').groups
 
-# Tips = []
-# for i in range(len(z)):
-#     Tips.append(json.loads(z[i]))
-# tcols = ['business_id','text', 'likes']
-# tips = pd.DataFrame(data=Tips, columns=tcols)
-# t = tips.groupby(by = 'business_id').groups
 
 print 'Created Dataset to be written'
 
 total = len(idx)
 for n, i in enumerate(xrange(total)):
-    print '%d of %d: %s' %(n, total, str(idx[i])) 
 
 #   0         1            2           3           4           5          6            7           8 
 # [name', 'latitude', 'longitude',  'stars', 'full_address', 'city', 'categories', 'attributes', 'url'] 
@@ -93,6 +75,8 @@ for n, i in enumerate(xrange(total)):
 
     attrs = []
     mapping = ["cheap", "moderate", "moderate", "expensive"]
+    if attr == None:
+        attr = {}
     for key, val in attr.items():
         if isinstance(val, bool):
             if val:
@@ -159,8 +143,12 @@ for n, i in enumerate(xrange(total)):
         f.write('0\n')
     f.close()
 
-
-
+    if n % 200 == 0 or n == (total - 1):
+        sys.stdout.write('\rWriting files ' + str(round(float(n + 1)/total * 100,2)) + '%')
+        sys.stdout.flush()
+    if n == (total - 1):
+        print " ... Done"
+                
 
 
 
