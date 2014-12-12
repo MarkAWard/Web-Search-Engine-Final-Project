@@ -55,7 +55,7 @@ public class RankerComprehensive extends Ranker {
 	  			all.add(scoreDocument(query, i));
 	  	}
 	  	else {
-	  		System.out.println(  " Docid: " + i._docid + " Docname: " + i.getTitle() );	
+	  		//System.out.println(  " Docid: " + i._docid + " Docname: " + i.getTitle() );	
 	        all.add(scoreDocument(query, i));	
 	    }
 	    
@@ -165,11 +165,11 @@ public class RankerComprehensive extends Ranker {
 	private ScoredDocument scoreDocument(Query query, Document document) {
 	    double title_score = runquery_title(query, document);
 	    double cosine_score = runquery_cosine(query, document);
-	    double category_score = runquery_categories(query, document);
-	    if (category_score>0.0)
-	    {
-	    	System.out.println(category_score);
-	    }
+	    //double category_score = runquery_categories(query, document);
+	    //if (category_score>0.0)
+	    //{
+	    //	System.out.println(category_score);
+	    //}
 	    double score = title_score + cosine_score ;
 	    return new ScoredDocument(document, score);
 	}
