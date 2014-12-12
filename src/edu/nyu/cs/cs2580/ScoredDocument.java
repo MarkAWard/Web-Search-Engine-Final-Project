@@ -22,7 +22,7 @@ class ScoredDocument implements Comparable<ScoredDocument> {
 	}
 
 	@SuppressWarnings("unchecked")
-	public String asJSON() {
+	public JSONObject asJSON() {
 		JSONObject json_buf = new JSONObject();
 
 		json_buf.put("name", get_doc().getTitle());
@@ -33,7 +33,7 @@ class ScoredDocument implements Comparable<ScoredDocument> {
 		json_buf.put("city", get_doc().getCity());
 		json_buf.put("url", get_doc().getUrl());
 		json_buf.put("num_reviews", get_doc().get_num_Reviews());
-		return json_buf.toJSONString();
+		return json_buf;
 	}
 
 	/**

@@ -3,9 +3,13 @@ package edu.nyu.cs.cs2580;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Vector;
+
+import org.json.simple.JSONObject;
+
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
+
 import edu.nyu.cs.cs2580.SearchEngine.Options;
 
 /**
@@ -114,13 +118,21 @@ class QueryHandler implements HttpHandler {
 
 	private void constructTextOutput(final Vector<ScoredDocument> docs,
 			StringBuffer response) {
+		JSONObject j =new JSONObject();
+		
+		int i=1;
+		
 		for (ScoredDocument doc : docs) {
-			response.append(response.length() > 0 ? "\n" : "");
+			//response.append(response.length() > 0 ? "\n" : "");
 			// response.append(doc.asTextResult());
-			response.append(doc.asJSON());
+			//response.append(doc.asJSON());
+			
+			j.put("i", doc.asJSON());
+			i++;
 
 		}
-		response.append(response.length() > 0 ? "\n" : "");
+		//response.append(response.length() > 0 ? "\n" : "");
+		response.append(j.toJSONString());
 	}
 
 	public void handle(HttpExchange exchange) throws IOException {
