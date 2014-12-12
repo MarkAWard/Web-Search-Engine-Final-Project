@@ -116,6 +116,7 @@ class QueryHandler implements HttpHandler {
 		responseBody.close();
 	}
 
+	@SuppressWarnings("unchecked")
 	private void constructTextOutput(final Vector<ScoredDocument> docs,
 			StringBuffer response) {
 		JSONObject j =new JSONObject();
@@ -127,7 +128,7 @@ class QueryHandler implements HttpHandler {
 			// response.append(doc.asTextResult());
 			//response.append(doc.asJSON());
 			
-			j.put("i", doc.asJSON());
+			j.put(i, doc.asJSON());
 			i++;
 
 		}
