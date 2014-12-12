@@ -265,6 +265,7 @@ public class IndexerInvertedCompressed extends Indexer implements Serializable {
 		String business_id = s.next();
 		String url = s.next();
 		String title = s.next();
+		title= title.replace("\n", "");
 		Double lati = s.nextDouble();
 		Double longi = s.nextDouble();
 		Double stars = s.nextDouble();
@@ -324,6 +325,7 @@ public class IndexerInvertedCompressed extends Indexer implements Serializable {
 					.replaceAll(" ", "-")
 					+ "-" + city.replaceAll("[^a-zA-Z ]", "").toLowerCase().replaceAll(" ", "-");
 			url = "http://www.yelp.com/biz/" + suffix;
+			doc.setUrl(url);
 		} else {
 			doc.setUrl(url);
 		}
