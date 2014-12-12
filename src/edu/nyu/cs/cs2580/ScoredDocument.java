@@ -1,5 +1,7 @@
 package edu.nyu.cs.cs2580;
 
+import org.json.simple.JSONObject;
+
 /**
  * Document with score.
  * 
@@ -7,48 +9,62 @@ package edu.nyu.cs.cs2580;
  * @author congyu
  */
 class ScoredDocument implements Comparable<ScoredDocument> {
-  private Document _doc;
-  private double _score;
+	private Document _doc;
+	private double _score;
 
-  public ScoredDocument(Document doc, double score) {
-    set_doc(doc);
-    _score = score;
-  }
+	public ScoredDocument(Document doc, double score) {
+		set_doc(doc);
+		_score = score;
+	}
 
-  public String asTextResult() {
-    StringBuffer buf = new StringBuffer();
-    buf.append(get_doc()._docid).append("\t");
-    buf.append(get_doc().getTitle()).append("\t");
-    buf.append(_score).append("\t");
-    buf.append(get_doc().getPageRank()).append("\t");
-    buf.append(get_doc().getNumViews()).append("\t");
-    return buf.toString();
-  }
+	public String asTextResult() {
+		StringBuffer buf = new StringBuffer();
+		buf.append(get_doc()._docid).append("\t");
+		buf.append(get_doc().getTitle()).append("\t");
+		buf.append(_score).append("\t");
+		buf.append(get_doc().getPageRank()).append("\t");
+		buf.append(get_doc().getNumViews()).append("\t");
+		return buf.toString();
+	}
 
-  /**
-   * @CS2580: Student should implement {@code asHtmlResult} for final project.
-   */
-  public String asHtmlResult() {
-    return "";
-  }
+	@SuppressWarnings("unchecked")
+	public String asJSON() {
+		JSONObject json_buf = new JSONObject();
 
-  @Override
-  public int compareTo(ScoredDocument o) {
-    if (this._score == o._score) {
-      return 0;
-    }
-    return (this._score > o._score) ? 1 : -1;
-  }
+		json_buf.put("name", get_doc().getTitle());
+		json_buf.put("lat", get_doc().get_lati());
+		json_buf.put("long", get_doc().get_longi());
+		json_buf.put("star", get_doc().get_stars());
+		json_buf.put("address", get_doc().get_address());
+		json_buf.put("city", get_doc().getCity());
+		json_buf.put("url", get_doc().getUrl());
+		return json_buf.toJSONString();
+	}
 
-  public Document get_doc() {
-	 return _doc;
-  }
+	/**
+	 * @CS2580: Student should implement {@code asHtmlResult} for final project.
+	 */
+	public String asHtmlResult() {
+		return "";
+	}
 
-  public void set_doc(Document _doc) {
-	 this._doc = _doc;
-  }
+	@Override
+	public int compareTo(ScoredDocument o) {
+		if (this._score == o._score) {
+			return 0;
+		}
+		return (this._score > o._score) ? 1 : -1;
+	}
 
-  public void updateScore(double additional){
-    _score += additional;
-  }
+	public Document get_doc() {
+		return _doc;
+	}
+
+	public void set_doc(Document _doc) {
+		this._doc = _doc;
+	}
+
+	public void updateScore(double additional) {
+		_score += additional;
+	}
 }
