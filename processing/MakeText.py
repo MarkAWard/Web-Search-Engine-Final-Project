@@ -22,44 +22,55 @@ if __name__ == '__main__':
     print "\nReading input files from: " + in_dir
     print "Output directory: " + out_dir
     print ""
+    R = []
     for filename in os.listdir(in_dir):
         if filename.find('business') > -1:
             print 'Reading Business Data'
-            f = open(in_dir + filename, 'r')
-            x = f.readlines()
-            f.close()
+            bcols =['business_id', 'name', 'latitude', 'longitude',  'stars', 'full_address', 'city', 'categories', 'attributes', 'url']   
+            bus = pd.read_json(in_dir + filename)
+            bus = bus[bcols]
+            bus = bus.set_index('business_id')
+            idx = bus.index            
+#            f = open(in_dir + filename, 'r')
+#            x = f.readlines()
+#            f.close()
         if filename.find('tip') > -1:
             print 'Reading Tips'
-            f = open(in_dir + filename, 'r')
-            z = f.readlines()
-            f.close()
+            tcols = ['business_id','text', 'likes']
+            tips = pd.read_json(in_dir + filename)
+            tips = tips[tcols]
+            t = tips.groupby(by='business_id').groups
+#            f = open(in_dir + filename, 'r')
+#            z = f.readlines()
+#            f.close()
         if filename.find('review') > -1:
-            print 'Reading Reviews'
+            print 'Reading Reviews ' + filename
             f = open(in_dir + filename, 'r')
-            y = f.readlines()
+            R += f.readlines()
             f.close()
 
-Bus = []
-for i in range(len(x)):
-    Bus.append(json.loads(x[i]))
-bcols =['business_id', 'name', 'latitude', 'longitude',  'stars', 'full_address', 'city', 'categories', 'attributes', 'url']   
-bus = pd.DataFrame(data=Bus, columns=bcols)
-bus = bus.set_index('business_id')
-idx = bus.index
+# Bus = []
+# for i in range(len(x)):
+#     Bus.append(json.loads(x[i]))
+# bcols =['business_id', 'name', 'latitude', 'longitude',  'stars', 'full_address', 'city', 'categories', 'attributes', 'url']   
+# bus = pd.DataFrame(data=Bus, columns=bcols)
+# bus = bus.set_index('business_id')
+# idx = bus.index
 
 Rev = []
-for i in range(len(y)):
-    Rev.append(json.loads(y[i]))
-rcols = ['business_id','text', 'votes']
+for i in range(len(R)):
+    Rev.append(json.loads(R[i]))
+rcols = ['business_id','text', 'votes', 'review_id']
 rev = pd.DataFrame(data=Rev, columns=rcols)
+rev.drop_duplicates(subset=['review_id'], inplace=True)
 g = rev.groupby(by = 'business_id').groups
 
-Tips = []
-for i in range(len(z)):
-    Tips.append(json.loads(z[i]))
-tcols = ['business_id','text', 'likes']
-tips = pd.DataFrame(data=Tips, columns=tcols)
-t = tips.groupby(by = 'business_id').groups
+# Tips = []
+# for i in range(len(z)):
+#     Tips.append(json.loads(z[i]))
+# tcols = ['business_id','text', 'likes']
+# tips = pd.DataFrame(data=Tips, columns=tcols)
+# t = tips.groupby(by = 'business_id').groups
 
 print 'Created Dataset to be written'
 
