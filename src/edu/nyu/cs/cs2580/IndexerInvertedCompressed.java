@@ -267,11 +267,13 @@ public class IndexerInvertedCompressed extends Indexer implements Serializable {
 
 		// pass the title
 		String business_id = s.next();
+		String url = s.next();
 		String title = s.next();
 		Double lati = s.nextDouble();
 		Double longi = s.nextDouble();
 		Double stars = s.nextDouble();
 		String address = s.next();
+		String city = s.next();
 		String zip = s.next();
 
 		doc_string.append(title + " ");
@@ -319,11 +321,22 @@ public class IndexerInvertedCompressed extends Indexer implements Serializable {
 		DocumentIndexed doc = new DocumentIndexed(_documents.size());
 
 		doc.set_business_id(business_id);
+
+		if (url.equals("nan")) {
+			String suffix = title.replaceAll("[^a-zA-Z ]", "").toLowerCase()
+					.replaceAll(" ", "-")
+					+ "-" + city.toLowerCase();
+			url = "http://www.yelp.com/biz/" + suffix;
+		} else {
+			doc.setUrl(url);
+		}
+
 		doc.setTitle(title);
 		doc.set_lati(lati);
 		doc.set_longi(longi);
 		doc.set_stars(stars);
 		doc.set_address(address);
+		doc.setCity(city);
 		doc.set_zip(zip);
 		doc.set_categories(t1_terms);
 
@@ -367,8 +380,8 @@ public class IndexerInvertedCompressed extends Indexer implements Serializable {
 			_term_list.put(idx, list);
 
 		}
-		
-		doc_string=null;
+
+		doc_string = null;
 
 	}
 
