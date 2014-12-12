@@ -150,11 +150,11 @@ public class RankerComprehensive extends Ranker {
 	private ScoredDocument scoreDocument(Query query, Document document) {
 	    double title_score = runquery_title(query, document);
 	    double cosine_score = runquery_cosine(query, document);
-	    //double category_score = runquery_categories(query, document);
-	    //if (category_score>0.0)
-	    //{
-	    //	System.out.println(category_score);
-	    //}
+	    double category_score = runquery_categories(query, document);
+	    if (category_score>0.0)
+	    {
+	    	System.out.println(category_score);
+	    }
 	    double score = title_score + cosine_score ;
 	    return new ScoredDocument(document, score);
 	}
@@ -173,13 +173,15 @@ public class RankerComprehensive extends Ranker {
 	private double isThere(String s, Vector<String> C)
 	    {   Vector<String> catTokens = new Vector<String>();
 		double val = 0;
-		for (int j = 0; j < C.size(); j ++)
+		for (int j = 0; j < C.size(); j++)
 		{
 		    String c = C.get(j);
 		    catTokens = (Vector <String>) ( Arrays.asList(c.toLowerCase().split(" ")) );
 		    if (catTokens.contains(s.toLowerCase()))
-			val = 1;
-			break;
+		    {
+		    	val = 1;
+		    	break;
+		    }
 		}
 		return val;
 	    }
