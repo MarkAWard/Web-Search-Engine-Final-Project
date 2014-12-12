@@ -128,26 +128,21 @@ for n, i in enumerate(xrange(total)):
     
     try:
         tipni = tips.iloc[t[idx[i]]]['text']
-        f.write(str(len(tipni))+'\n')
         like_tip = tips.iloc[t[idx[i]]]['likes']       
+        f.write(str(len(tipni))+'\n')
         for vs in range(len(tipni)):
             f.write(str(like_tip.iloc[vs])+ '\n')
-            tipss = WHITESPACE.sub(' ', tipni).strip()
+            tipss = WHITESPACE.sub(' ', tipni.iloc[vs]).strip()
             f.write(tipss +'\n')
     except:
         f.write('0\n')
     try:
         Reviews = rev.iloc[g[idx[i]]]['text']
-        like = []
         likes = rev.iloc[g[idx[i]]]['votes']
         f.write(str(len(Reviews))+'\n')
-        
-        ixx = Reviews.index
         for vals in range(len(Reviews)):
             f.write(str(likes.iloc[vals]['useful'])+'\n')
-            r = Reviews.ix[ixx[vals]]
-            revs = "".join([s for s in r.splitlines(True) if s.strip("\r\n")])
-            revs = WHITESPACE.sub(' ', revs).strip()
+            revs = WHITESPACE.sub(' ', Reviews.iloc[vals]).strip()
             f.write(revs+'\n')
     except:
         f.write('0\n')
