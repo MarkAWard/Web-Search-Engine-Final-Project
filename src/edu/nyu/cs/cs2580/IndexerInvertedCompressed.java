@@ -319,7 +319,7 @@ public class IndexerInvertedCompressed extends Indexer implements Serializable {
 
 		doc.set_business_id(business_id);
 
-		if (url.equals("nan")) {
+		if (url.toLowerCase().equals("none")) {
 			String suffix = title.replaceAll("[^a-zA-Z ]", "").toLowerCase()
 					.replaceAll(" ", "-")
 					+ "-" + city.replaceAll("[^a-zA-Z ]", "").toLowerCase().replaceAll(" ", "-");
