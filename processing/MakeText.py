@@ -114,7 +114,7 @@ for n, i in enumerate(xrange(total)):
     
     f = codecs.open(out_dir + idx[i] + '.txt', encoding='utf-8', mode='w')
     f.write(idx[i]+'\n')
-    f.write(str(city)+'\n')
+    f.write(str(url)+'\n')
     f.write(name+'\n')
     f.write(str(lat)+'\n')
     f.write(str(longs)+'\n')
@@ -132,8 +132,7 @@ for n, i in enumerate(xrange(total)):
         like_tip = tips.iloc[t[idx[i]]]['likes']       
         for vs in range(len(tipni)):
             f.write(str(like_tip.iloc[vs])+ '\n')
-            tipss = "".join([s for s in tipnis.splitlines(True) if s.strip("\r\n")])
-            tipss = STOP.sub('', tipss.replace('\n', ' '))
+            tipss = WHITESPACE.sub(' ', tipni).strip()
             f.write(tipss +'\n')
     except:
         f.write('0\n')
@@ -148,7 +147,7 @@ for n, i in enumerate(xrange(total)):
             f.write(str(likes.iloc[vals]['useful'])+'\n')
             r = Reviews.ix[ixx[vals]]
             revs = "".join([s for s in r.splitlines(True) if s.strip("\r\n")])
-            revs = STOP.sub('', revs.replace('\n', ' '))
+            revs = WHITESPACE.sub(' ', revs).strip()
             f.write(revs+'\n')
     except:
         f.write('0\n')
