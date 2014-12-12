@@ -77,7 +77,7 @@ class Document implements Serializable {
 	private String _address = "";
 	private Double _stars = 0.0;
 	private String _zip = "";
-	private String city = "";
+	private String _city = "";
 	private Vector<String> _categories = new Vector<String>();
 
 	public Document(int docid) {
@@ -173,11 +173,11 @@ class Document implements Serializable {
 	}
 
 	public String getCity() {
-		return city;
+		return _city;
 	}
 
 	public void setCity(String city) {
-		this.city = city;
+		this._city = city;
 	}
 
 }

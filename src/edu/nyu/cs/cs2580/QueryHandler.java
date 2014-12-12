@@ -3,13 +3,9 @@ package edu.nyu.cs.cs2580;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Vector;
-
-import org.json.simple.JSONObject;
-
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
-
 import edu.nyu.cs.cs2580.SearchEngine.Options;
 
 /**
@@ -32,7 +28,7 @@ class QueryHandler implements HttpHandler {
 		// The raw user query
 		public String _query = "";
 		// How many results to return
-		private int _numResults = 10;
+		private int _numResults = 20;
 		private int _numTerms = 10;
 		private int _numDocs = 10;
 
