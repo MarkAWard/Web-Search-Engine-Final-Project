@@ -25,7 +25,7 @@ public class RankerConjunctive extends Ranker {
   }
 
   @Override
-  public Vector<ScoredDocument> runQuery(Query query, int numResults) {
+  public Vector<ScoredDocument> runQuery(Query query, int numResults, double latitude, double longitude) {
   
 	  Queue<ScoredDocument> rankQueue = new PriorityQueue<ScoredDocument>();
   

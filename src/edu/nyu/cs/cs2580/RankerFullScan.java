@@ -22,7 +22,7 @@ class RankerFullScan extends Ranker {
   }
 
   @Override
-  public Vector<ScoredDocument> runQuery(Query query, int numResults) {    
+  public Vector<ScoredDocument> runQuery(Query query, int numResults,  double latitude, double longitude) {    
     Vector<ScoredDocument> all = new Vector<ScoredDocument>();
     
     for (int i = 0; i < _indexer.numDocs(); ++i) {

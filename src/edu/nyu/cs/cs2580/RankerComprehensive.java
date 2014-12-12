@@ -26,7 +26,7 @@ public class RankerComprehensive extends Ranker {
   }
 
   @Override
-  public Vector<ScoredDocument> runQuery(Query query, int numResults) {
+  public Vector<ScoredDocument> runQuery(Query query, int numResults, double latitude, double longitude) {
 	
 	Vector<ScoredDocument> all = new Vector<ScoredDocument>();
 
@@ -73,7 +73,7 @@ public class RankerComprehensive extends Ranker {
        
 
 
-    rerank(all);
+    rerank(all, latitude, longitude);
     Collections.sort(all, Collections.reverseOrder());
 
 
@@ -93,16 +93,17 @@ public class RankerComprehensive extends Ranker {
   }
 
 
-  private void rerank(Vector<ScoredDocument> orig_ranks) {
+  private void rerank(Vector<ScoredDocument> orig_ranks, double latitudes, double longitudes) {
 
     ArrayList<Tuple<ScoredDocument, Double>> numviews_tuples = new ArrayList<Tuple<ScoredDocument, Double>>();
     ArrayList<Tuple<ScoredDocument, Double>> stars_tuples = new ArrayList<Tuple<ScoredDocument, Double>>();
-
+    ArrayList<Tuple<ScoredDocument, Double>> locs_tuples = new ArrayList<Tuple<ScoredDocument, Double>>();
     // rerank the top 50 documents
     for (int i = 0; i < orig_ranks.size() && i < 55; i++) {
         ScoredDocument sdoc = orig_ranks.get(i);
-	stars_tuples.add(new Tuple<ScoredDocument, Double>(sdoc, sdoc.get_doc().get_stars()));
+        stars_tuples.add(new Tuple<ScoredDocument, Double>(sdoc, sdoc.get_doc().get_stars()));
         numviews_tuples.add(new Tuple<ScoredDocument, Double>(sdoc, (double) sdoc.get_doc().get_num_Reviews()));
+        locs_tuples.add(new Tuple<ScoredDocument, Double>(sdoc, (double) sdoc.get_doc().get_lati()));
     }
     
     Comparator< Tuple<ScoredDocument, Double>> comparator = new Comparator<Tuple<ScoredDocument, Double>>() {
@@ -116,8 +117,9 @@ public class RankerComprehensive extends Ranker {
     for (int i = 0; i < numviews_tuples.size(); i++) {
       ScoredDocument sdoc2 = numviews_tuples.get(i).getFirst();
       ScoredDocument sdoc1 = stars_tuples.get(i).getFirst();
-      double score;
-      double score1, s;
+      ScoredDocument sdoc3 = locs_tuples.get(i).getFirst();
+      double score, lats, longs;
+      double score1, s, locs;
       if (isBetween(i, 0, 9)){
         score = 1;
       } else if (isBetween(i, 10,19)) {
@@ -131,10 +133,23 @@ public class RankerComprehensive extends Ranker {
       } else {
         score = 0.1;
       }
-
+      
+      lats = locs_tuples.get(i).getFirst().get_doc().get_lati();
+      longs = locs_tuples.get(i).getFirst().get_doc().get_longi();
+      
+      double latDiff = lats - latitudes;
+      double longDiff = longs - longitudes;
+      double latSqr = Math.pow(latDiff,2);
+      double longSqr = Math.pow(longDiff,2);
+      
+      locs = -1 * Math.sqrt(latSqr + longSqr);
+      
+      
+      
       s = stars_tuples.get(i).getSecond();
       sdoc1.updateScore(s);
       sdoc2.updateScore(score);
+      sdoc3.updateScore(locs);
     }
 	
 
@@ -180,7 +195,6 @@ public class RankerComprehensive extends Ranker {
 		    if (catTokens.contains(s.toLowerCase()))
 		    {
 		    	val = 1;
-		    	break;
 		    }
 		}
 		return val;
