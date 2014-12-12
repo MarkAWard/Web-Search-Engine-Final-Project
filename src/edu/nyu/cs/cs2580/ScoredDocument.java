@@ -37,7 +37,7 @@ class ScoredDocument implements Comparable<ScoredDocument> {
 		json_buf.put("star", get_doc().get_stars());
 		json_buf.put("address", get_doc().get_address());
 		json_buf.put("city", get_doc().getCity());
-
+		json_buf.put("url", get_doc().getUrl());
 		return json_buf.toJSONString();
 	}
 
