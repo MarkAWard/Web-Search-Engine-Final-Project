@@ -14,6 +14,7 @@ Tips = pd.DataFrame(columns=['business_id','text', 'likes'])
 #UKPOSTCODE = re.compile("[A-Z]{1,2}[0-9R][0-9A-Z]?\s+[0-9][ABD-HJLNP-UW-Z]{2}")
 #CAPOSTCODE = re.compile("[ABCEGHJKLMNPRSTVXY]{1}\d{1}[A-Z]{1} *\d{1}[A-Z]{1}\d{1}")
 POSTCODE = re.compile("\d{5}(?:[-\s]\d{4})?|[A-Z]{1,2}[0-9R][0-9A-Z]?\s+[0-9][ABD-HJLNP-UW-Z]{2}|[ABCEGHJKLMNPRSTVXY]{1}\d{1}[A-Z]{1} *\d{1}[A-Z]{1}\d{1}")
+WHITESPACE = re.compile("\s+")
 
 def read_businesses(filename):
     global Businesses
@@ -21,7 +22,7 @@ def read_businesses(filename):
     with open(filename, 'r') as fp:
         for i, line in enumerate(fp.readlines()):
             obj = json.loads(line)
-            obj['full_address'] = re.sub('\s+', ' ', obj['full_address']).strip()
+            obj['full_address'] = WHITESPACE.sub(' ', obj['full_address']).strip()
             obj['postcode'] = find_postcode(obj['full_address'])
             obj['attributes'] = clean_attributes(obj['attributes'])
             Businesses = Businesses.append(obj, ignore_index=True)
