@@ -2,12 +2,6 @@ package edu.nyu.cs.cs2580;
 
 import org.json.simple.JSONObject;
 
-/**
- * Document with score.
- * 
- * @author fdiaz
- * @author congyu
- */
 class ScoredDocument implements Comparable<ScoredDocument> {
 	private Document _doc;
 	private double _score;

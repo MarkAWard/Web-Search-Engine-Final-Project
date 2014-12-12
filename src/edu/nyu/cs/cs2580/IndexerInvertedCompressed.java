@@ -1,10 +1,8 @@
 package edu.nyu.cs.cs2580;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -259,13 +257,11 @@ public class IndexerInvertedCompressed extends Indexer implements Serializable {
 
 	@SuppressWarnings("resource")
 	private void processDocument(String content) throws IOException {
-
 		StringBuilder doc_string = new StringBuilder();
 		Scanner s = new Scanner(content).useDelimiter("\n");
 		Set<Integer> uniqueTerms = new HashSet<Integer>();
 		HashMap<Integer, Integer> document_tf = new HashMap<Integer, Integer>();
 
-		// pass the title
 		String business_id = s.next();
 		String url = s.next();
 		String title = s.next();
