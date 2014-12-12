@@ -19,48 +19,46 @@ if __name__ == '__main__':
     if not in_dir.endswith('/'):
         in_dir += '/'
 
-    print "\nReading input files from: " + file_or_dir
+    print "\nReading input files from: " + in_dir
     print "Output directory: " + out_dir
     print ""
-    for filename in os.listdir(file_or_dir):
+    for filename in os.listdir(in_dir):
         if filename.find('business') > -1:
             print 'Reading Business Data'
-            f = open(file_or_dir + filename, 'r')
+            f = open(in_dir + filename, 'r')
             x = f.readlines()
             f.close()
         if filename.find('tip') > -1:
             print 'Reading Tips'
-            f = open(file_or_dir + filename, 'r')
+            f = open(in_dir + filename, 'r')
             z = f.readlines()
             f.close()
         if filename.find('review') > -1:
             print 'Reading Reviews'
-            f = open(file_or_dir + filename, 'r')
+            f = open(in_dir + filename, 'r')
             y = f.readlines()
             f.close()
 
 Bus = []
 for i in range(len(x)):
     Bus.append(json.loads(x[i]))
-bus = pd.DataFrame(Bus)
-cols =['business_id', 'name', 'latitude', 'longitude',  'stars', 'full_address', 'city', 'categories', 'attributes', 'url']   
-bus = bus[cols].set_index('business_id')
+bcols =['business_id', 'name', 'latitude', 'longitude',  'stars', 'full_address', 'city', 'categories', 'attributes', 'url']   
+bus = pd.DataFrame(data=Bus, columns=bcols)
+bus = bus.set_index('business_id')
 idx = bus.index
 
 Rev = []
 for i in range(len(y)):
     Rev.append(json.loads(y[i]))
-rev = pd.DataFrame(Rev)
-col = ['business_id','text', 'votes']
-rev = rev[col]
+rcols = ['business_id','text', 'votes']
+rev = pd.DataFrame(data=Rev, columns=rcols)
 g = rev.groupby(by = 'business_id').groups
 
 Tips = []
 for i in range(len(z)):
     Tips.append(json.loads(z[i]))
-tips = pd.DataFrame(Tips)
-col = ['business_id','text', 'likes']
-tips = tips[col]
+tcols = ['business_id','text', 'likes']
+tips = pd.DataFrame(data=Tips, columns=tcols)
 t = tips.groupby(by = 'business_id').groups
 
 print 'Created Dataset to be written'
@@ -72,11 +70,11 @@ for n, i in enumerate(xrange(total)):
 #   0         1            2           3           4           5          6            7           8 
 # [name', 'latitude', 'longitude',  'stars', 'full_address', 'city', 'categories', 'attributes', 'url'] 
     vals = bus.ix[idx[i]].values    
-    name = vals[0]
+    name = WHITESPACE.sub(' ', vals[0]).strip()
     lat = vals[1]
     longs = vals[2]
     stars = vals[3]
-    addr = vals[4]
+    ad = WHITESPACE.sub(' ', vals[4]).strip()    
     city = vals[5]
     cats = vals[6]
     attr = vals[7]
@@ -108,8 +106,6 @@ for n, i in enumerate(xrange(total)):
 
     Final_Cats = cats + attrs
 
-    ad = WHITESPACE.sub(' ', addr).strip()
-    
     postcode = POSTCODE.findall(ad)
     if postcode:
         zips =  postcode[-1]
