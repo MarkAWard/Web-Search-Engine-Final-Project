@@ -138,6 +138,8 @@ for n, i in enumerate(xrange(total)):
         for vals in range(len(Reviews)):
             f.write(str(likes.iloc[vals]['useful'])+'\n')
             revs = WHITESPACE.sub(' ', Reviews.iloc[vals]).strip()
+            if revs == "" or revs == " ":
+                revs = name
             f.write(revs+'\n')
     except:
         f.write('0\n')
@@ -148,12 +150,3 @@ for n, i in enumerate(xrange(total)):
         sys.stdout.flush()
     if n == (total - 1):
         print " ... Done"
-                
-
-
-
-
-
-
-
-
