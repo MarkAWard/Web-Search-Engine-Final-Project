@@ -30,7 +30,6 @@ class PipelineSimilarity(MRJob):
         for word, count in word_counts.items():
             yield word, (b_id, count, norm)
         
-
     def pair_businesses(self, word, values):
         for pair in combinations(values, 2):
             if pair[0][0] < pair[1][0]:
@@ -46,12 +45,28 @@ class PipelineSimilarity(MRJob):
             num += counts[0] * counts[1]
         yield key, float(num) / float(counts[2] * counts[3])
 
+    def map_similar(self, _, line):
+        bus_pair, sim = line.split('\t', 1)
+        bus = eval(bus_pair)
+        similarity = eval(sim)
+        yield bus[0], (similarity, bus[1]) 
+        yield bus[1], (similarity, bus[0]) 
+
+    def reduce_similar(self, key, values):
+        values = sorted(values, reverse=True)
+        for i, value in enumerate(values):
+            if i < 20:
+                yield key, value
+            else:
+                return
 
     def steps(self):
         return [
             MRStep(mapper=self.count_words,
                 reducer=self.pair_businesses),
-            MRStep(reducer=self.cosine_similarity)
+            MRStep(reducer=self.cosine_similarity),
+            MRStep(mapper=self.map_similar,
+                reducer=self.reduce_similar)
         ]
 
 if __name__ == '__main__':
