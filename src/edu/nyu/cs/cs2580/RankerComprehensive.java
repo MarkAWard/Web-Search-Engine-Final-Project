@@ -45,8 +45,8 @@ public class RankerComprehensive extends Ranker {
 
         	for(j=0;j<qp.phrase.size();j++) {
         		pos=_indexer.NextPhrase(qp.phrase.get(j), i._docid, -1);
-				if (pos != Double.POSITIVE_INFINITY)
-	  				System.out.println( "Position: " + pos+ " Docid: " + i._docid + " Docname: " + i.getTitle() );
+				//if (pos != Double.POSITIVE_INFINITY)
+	  				//System.out.println( "Position: " + pos+ " Docid: " + i._docid + " Docname: " + i.getTitle() );
 	  			 if(pos==Double.POSITIVE_INFINITY)
 	  				 break;
 	  		}
@@ -55,7 +55,7 @@ public class RankerComprehensive extends Ranker {
 	  			all.add(scoreDocument(query, i));
 	  	}
 	  	else {
-	  		System.out.println(  " Docid: " + i._docid + " Docname: " + i.getTitle() );	
+	  		//System.out.println(  " Docid: " + i._docid + " Docname: " + i.getTitle() );	
 	        all.add(scoreDocument(query, i));	
 	    }
 	    
@@ -64,7 +64,7 @@ public class RankerComprehensive extends Ranker {
 
 	Collections.sort(all, Collections.reverseOrder());
     rerank(all);
-    Collections.sort(all, Collections.reverseOrder());
+    //Collections.sort(all, Collections.reverseOrder());
 
     Vector<ScoredDocument> results = new Vector<ScoredDocument>();    
     for (int j1 = 0; j1 < all.size() && j1 < numResults; ++j1)
@@ -76,15 +76,13 @@ public class RankerComprehensive extends Ranker {
 
   private void rerank(Vector<ScoredDocument> orig_ranks) {
 
-    ArrayList<Tuple<ScoredDocument, Double>> pagerank_tuples = new ArrayList<Tuple<ScoredDocument, Double>>();
     ArrayList<Tuple<ScoredDocument, Double>> numviews_tuples = new ArrayList<Tuple<ScoredDocument, Double>>();
 
 
     // rerank the top 50 documents
     for (int i = 0; i < orig_ranks.size() && i < 55; i++) {
         ScoredDocument sdoc = orig_ranks.get(i);
-        pagerank_tuples.add(new Tuple<ScoredDocument, Double>(sdoc, sdoc.get_doc().getPageRank()));
-        numviews_tuples.add(new Tuple<ScoredDocument, Double>(sdoc, (double) sdoc.get_doc().getNumViews()));
+        numviews_tuples.add(new Tuple<ScoredDocument, Double>(sdoc, (double) sdoc.get_doc().get_num_Reviews()));
     }
     
     Comparator< Tuple<ScoredDocument, Double>> comparator = new Comparator<Tuple<ScoredDocument, Double>>() {
@@ -93,31 +91,29 @@ public class RankerComprehensive extends Ranker {
         return tupleB.getSecond().compareTo(tupleA.getSecond());
       }
     };
-    Collections.sort(pagerank_tuples, comparator);
     Collections.sort(numviews_tuples, comparator);
-
-    for (int i = 0; i < pagerank_tuples.size(); i++) {
-      ScoredDocument sdoc1 = pagerank_tuples.get(i).getFirst();
+    /*
+    for (int i = 0; i < numviews_tuples.size(); i++) {
       ScoredDocument sdoc2 = numviews_tuples.get(i).getFirst();
 
       double score;
-      if (isBetween(i, 0, 9)){
-        score = 1.0;
-      } else if (isBetween(i, 10, 19)) {
-        score = 0.8;        
-      } else if (isBetween(i, 20, 29)) {
-        score = 0.6;        
-      } else if (isBetween(i, 30, 39)) {
-        score = 0.4;        
-      } else if (isBetween(i, 40, 49)) {
-        score = 0.2;        
-      } else {
+      if (isBetween(i, 0, 40)){
         score = 0.1;
+      } else if (isBetween(i, 41, 80)) {
+        score = 0.2;        
+      } else if (isBetween(i, 81, 150)) {
+        score = 0.4;        
+      } else if (isBetween(i, 151, 400)) {
+        score = 0.6;        
+      } else if (isBetween(i, 400, 1000)) {
+        score = 0.8;        
+      } else {
+        score = 1;
       }
 
-      sdoc1.updateScore(score);      
       sdoc2.updateScore(score);
     }
+	*/
 
 }
 
@@ -131,16 +127,20 @@ public class RankerComprehensive extends Ranker {
 	private ScoredDocument scoreDocument(Query query, Document document) {
 		double title_score = runquery_title(query, document);
 	    double cosine_score = runquery_cosine(query, document);
-
+		
 	    double score = title_score + cosine_score;
-
+	    if (title_score >0.0)
+	    {	
+	    	System.out.println(title_score);
+		System.out.println(document.getTitle());
+	    }
 	    return new ScoredDocument(document, score);
 	}
 
 	private double runquery_title(Query query, Document doc) {
 	    String title = ((DocumentIndexed) doc).getTitle();
 	    Vector<String> titleTokens = new Vector<String>( Arrays.asList(title.split(" ")) );    
-
+	    //System.out.println(title);
 	    double size = (double) query._tokens.size();
 	    titleTokens.retainAll(query._tokens); 
 	    double score = titleTokens.size() / size;
