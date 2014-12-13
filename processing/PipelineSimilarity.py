@@ -45,10 +45,7 @@ class PipelineSimilarity(MRJob):
             num += counts[0] * counts[1]
         yield key, float(num) / float(counts[2] * counts[3])
 
-    def map_similar(self, _, line):
-        bus_pair, sim = line.split('\t', 1)
-        bus = eval(bus_pair)
-        similarity = eval(sim)
+    def map_similar(self, bus, similarity):
         yield bus[0], (similarity, bus[1]) 
         yield bus[1], (similarity, bus[0]) 
 
