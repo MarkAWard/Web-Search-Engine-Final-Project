@@ -16,4 +16,4 @@ To Do:
   * GPS
   * Autocomplete
 6. Clean Similarity Files
-  * sed 's/"\|,\|\[\|\]//g'
+  * ``` sed 's/"\|,\|\[\|\]//g' ```
