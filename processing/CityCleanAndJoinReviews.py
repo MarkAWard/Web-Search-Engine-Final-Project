@@ -14,7 +14,7 @@ PS = PorterStemmer()
 
 CITY_IDS = open("../data/nyc_business.txt", "r").readlines()
 
-class CleanAndJoinReviews(MRJob):
+class CityCleanAndJoinReviews(MRJob):
 
     def mapper(self, _, line):
         obj = json.loads(line)
@@ -26,4 +26,4 @@ class CleanAndJoinReviews(MRJob):
         yield b_id, " ".join(reviews)
 
 if __name__ == '__main__':
-    CleanAndJoinReviews.run()
+    CityCleanAndJoinReviews.run()
