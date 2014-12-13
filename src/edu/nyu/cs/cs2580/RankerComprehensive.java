@@ -63,12 +63,13 @@ public class RankerComprehensive extends Ranker {
 	}
 	System.out.println("--------");
 	Collections.sort(all, Collections.reverseOrder());
-   
-
+   	System.out.println("Printing from Ranker Comprehensive.java");
+	System.out.println("Sorting based on Text only");
+	System.out.println("Number of Reviews of Top Docs retrieved");
 	for (int j2 = 0; j2 < all.size() && j2 < numResults; ++j2)
 	{
 	ScoredDocument d  = all.get(j2);
-	System.out.println(d.get_doc().get_num_Reviews());
+	System.out.println(" Doc " + d.get_doc().getTitle() + " Reviews " + d.get_doc().get_num_Reviews());
 	}
        
 
@@ -78,11 +79,13 @@ public class RankerComprehensive extends Ranker {
 
 
 	System.out.println("--------------");
+	System.out.println("Sorting on reviews+stars+location, Using top 100 documents instead of 50 (Used in Ass3)");
+	System.out.println("Number of Reviews for the sorted set");
 
     for (int j3 = 0; j3 < all.size() && j3 < numResults; ++j3)
         {
         ScoredDocument d  = all.get(j3);
-        System.out.println(d.get_doc().get_num_Reviews());
+        System.out.println(" Doc " + d.get_doc().getTitle() + " Reviews " +d.get_doc().get_num_Reviews());
         }
 
     Vector<ScoredDocument> results = new Vector<ScoredDocument>();    
@@ -99,7 +102,7 @@ public class RankerComprehensive extends Ranker {
     ArrayList<Tuple<ScoredDocument, Double>> stars_tuples = new ArrayList<Tuple<ScoredDocument, Double>>();
     ArrayList<Tuple<ScoredDocument, Double>> locs_tuples = new ArrayList<Tuple<ScoredDocument, Double>>();
     // rerank the top 50 documents
-    for (int i = 0; i < orig_ranks.size() && i < 55; i++) {
+    for (int i = 0; i < orig_ranks.size() && i < 100; i++) {
         ScoredDocument sdoc = orig_ranks.get(i);
         stars_tuples.add(new Tuple<ScoredDocument, Double>(sdoc, sdoc.get_doc().get_stars()));
         numviews_tuples.add(new Tuple<ScoredDocument, Double>(sdoc, (double) sdoc.get_doc().get_num_Reviews()));
@@ -145,7 +148,7 @@ public class RankerComprehensive extends Ranker {
       locs = -1 * Math.sqrt(latSqr + longSqr);
       
       
-      
+      //System.out.println(locs); 
       s = stars_tuples.get(i).getSecond();
       sdoc1.updateScore(s);
       sdoc2.updateScore(score);

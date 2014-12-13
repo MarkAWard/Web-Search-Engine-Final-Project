@@ -35,8 +35,12 @@ class QueryHandler implements HttpHandler {
 		private int _numResults = 20;
 		private int _numTerms = 10;
 		private int _numDocs = 10;
-		private double _latitude = 0.0;
-		private double _longitude = 0.0;
+		//Madison Wisconsin
+		//private double _latitude = 43.0667;
+                //private double _longitude = 89.4000; 
+		// New York
+		private double _latitude = 42.3482;
+		private double _longitude = 75.1890 ;
 		// The type of the ranker we will be using.
 		public enum RankerType {
 			NONE, FULLSCAN, CONJUNCTIVE, FAVORITE, COSINE, PHRASE, QL, LINEAR, COMPREHENSIVE
