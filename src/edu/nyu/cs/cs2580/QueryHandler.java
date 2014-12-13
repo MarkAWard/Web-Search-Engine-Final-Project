@@ -110,6 +110,8 @@ class QueryHandler implements HttpHandler {
 			throws IOException {
 		Headers responseHeaders = exchange.getResponseHeaders();
 		responseHeaders.set("Content-Type", "text/plain");
+		responseHeaders.set("Access-Control-Allow-Origin", "*");
+		responseHeaders.set("Access-Control-Allow-Methods", "POST, GET, OPTIONS");
 		exchange.sendResponseHeaders(200, 0); // arbitrary number of bytes
 		OutputStream responseBody = exchange.getResponseBody();
 		responseBody.write(message.getBytes());
