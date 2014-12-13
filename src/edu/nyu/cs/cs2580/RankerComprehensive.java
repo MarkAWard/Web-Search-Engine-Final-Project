@@ -62,7 +62,7 @@ public class RankerComprehensive extends Ranker {
 	    i = _indexer.nextDoc(query,i._docid);
 	}
 	System.out.println("--------");
-	Collections.sort(all, Collections.reverseOrder());
+	//Collections.sort(all, Collections.reverseOrder());
    	System.out.println("Printing from Ranker Comprehensive.java");
 	System.out.println("Sorting based on Text only");
 	System.out.println("Number of Reviews of Top Docs retrieved");
@@ -102,7 +102,7 @@ public class RankerComprehensive extends Ranker {
     ArrayList<Tuple<ScoredDocument, Double>> stars_tuples = new ArrayList<Tuple<ScoredDocument, Double>>();
     ArrayList<Tuple<ScoredDocument, Double>> locs_tuples = new ArrayList<Tuple<ScoredDocument, Double>>();
     // rerank the top 50 documents
-    for (int i = 0; i < orig_ranks.size() && i < 100; i++) {
+    for (int i = 0; i < orig_ranks.size(); i++) {
         ScoredDocument sdoc = orig_ranks.get(i);
         stars_tuples.add(new Tuple<ScoredDocument, Double>(sdoc, sdoc.get_doc().get_stars()));
         numviews_tuples.add(new Tuple<ScoredDocument, Double>(sdoc, (double) sdoc.get_doc().get_num_Reviews()));
