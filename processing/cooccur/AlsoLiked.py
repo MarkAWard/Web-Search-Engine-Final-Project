@@ -1,6 +1,7 @@
 from mrjob.job import MRJob
 from mrjob.step import MRStep
 from itertools import combinations
+import json
 
 class AlsoLiked(MRJob):
 
@@ -21,8 +22,9 @@ class AlsoLiked(MRJob):
     def combine(self, pair, counts):
         yield pair, sum(counts)
 
-    def output_each_biz(self, pair, count):
-        if count > 5:
+    def output_each_biz(self, pair, counts):
+        count = sum(counts)
+        if count >= 10:
             yield pair[0], (count, pair[1])
             yield pair[1], (count, pair[0])
 
@@ -38,7 +40,7 @@ class AlsoLiked(MRJob):
         return [
             MRStep(mapper=self.map_user_biz,
                 reducer=self.pair_businesses),
-            MRStep(mapper=self.combine,
+            MRStep(combiner=self.combine,
                 reducer=self.output_each_biz),
             MRStep(reducer=self.reduce_pairs)
         ]
