@@ -19,6 +19,8 @@ import edu.nyu.cs.cs2580.IndexerInvertedCompressed.Tuple;
  */
 public class RankerComprehensive extends Ranker {
 
+	private ReadCorpus Cleaner = new ReadCorpus();
+
 	public RankerComprehensive(Options options,
 		CgiArguments arguments, Indexer indexer) {
 		super(options, arguments, indexer);
@@ -122,7 +124,7 @@ public class RankerComprehensive extends Ranker {
 	}
 
 	private double runquery_title(Query query, Document doc) {
-		String title = doc.getTitle();
+		String title = Cleaner.cleanAndStem(doc.getTitle());
 		Vector<String> titleTokens = new Vector<String>( Arrays.asList(title.split(" ")) );    
 		double size = (double) query._tokens.size();
 		titleTokens.retainAll(query._tokens); 
@@ -138,7 +140,7 @@ public class RankerComprehensive extends Ranker {
 		Vector<String> categories = doc.get_categories();
 		Vector<String> cat_tokens = null;
 		for(String cats : categories) {
-			cat_tokens = new Vector<String>(Arrays.asList(cats.split(" ")));
+			cat_tokens = new Vector<String>(Arrays.asList(Cleaner.cleanAndStem(cats).split(" ")));
 			cat_tokens.retainAll(query._tokens);
 			score += cat_tokens.size();
 		}
