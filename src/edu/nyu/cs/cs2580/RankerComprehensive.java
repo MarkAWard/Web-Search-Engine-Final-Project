@@ -70,7 +70,7 @@ public class RankerComprehensive extends Ranker {
 		System.out.println("Printing from Ranker Comprehensive.java");
 		System.out.println("Sorting based on cosine, title, categories, and distance");
 		System.out.println("Number of Reviews of Top Docs retrieved");
-		for (int j2 = 0; j2 < all.size() && j2 < numResults*3; ++j2)
+		for (int j2 = 0; j2 < all.size() && j2 < numResults*2; ++j2)
 		{
 			ScoredDocument d  = all.get(j2);
 			System.out.println(" Doc: " + d.get_doc().getTitle() + " Distance: " + d.get_distance() + " Score: " + d.get_score());
@@ -101,9 +101,11 @@ public class RankerComprehensive extends Ranker {
 
 
 	private ScoredDocument scoreDocument(Query query, Document document, double latitude, double longitude) {
+		double distance_score = runquery_distance(document, latitude, longitude);
+		if (distance_score > 100.0) return new ScoredDocument(document, (25.0 / distance_score), distance_score);
+
 		double title_score = runquery_title(query, document);
 		double cosine_score = runquery_cosine(query, document);
-		double distance_score = runquery_distance(document, latitude, longitude);
 		double category_score = runquery_categories(query, document);
 
 		// inflate score if within 25 miles else decrease score
