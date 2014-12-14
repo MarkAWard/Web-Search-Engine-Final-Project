@@ -17,8 +17,8 @@ To Do:
 6. Category expansion. Medical -> Medical, Doctor etc
 4. Query log
 5. Front End
-  * Google Maps
-  * GPS
+  * ~~Google Maps~~
+  * ~~GPS~~
   * Autocomplete
   * Integrate similar businesses
   * Integrate users also liked
