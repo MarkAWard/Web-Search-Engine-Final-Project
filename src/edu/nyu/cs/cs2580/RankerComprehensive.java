@@ -114,7 +114,9 @@ public class RankerComprehensive extends Ranker {
 		double cosine_score = runquery_cosine(query, document);
 		double category_score = runquery_categories(query, document);
 
-		double score = (title_score + cosine_score + category_score);
+		double score = (_options._titw * title_score + 
+						_options._cosw * cosine_score + 
+						_options._catw * category_score);
 		ScoredDocument sdoc = new ScoredDocument(document, score);
 		
 		sdoc.set_title(title_score);

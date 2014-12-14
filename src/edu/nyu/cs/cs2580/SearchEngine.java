@@ -29,7 +29,14 @@ public class SearchEngine {
 		// File that contains one stop word per line
 		public String _stopWordsList = null;
 
-		// Additional group specific configuration can be added below.
+		// File that contains one stop word per line
+		public Double _titw = null;
+
+		// File that contains one stop word per line
+		public Double _cosw = null;
+		
+		// File that contains one stop word per line
+		public Double _catw = null;
 
 		/**
 		 * Constructor for options.
@@ -71,6 +78,16 @@ public class SearchEngine {
 
 			_stopWordsList = options.get("stopWordsList");
 			Check(_stopWordsList != null, "Missing option: stopWordsList");
+
+			_titw = Double.valueOf(options.get("title_weight"));
+			Check(_stopWordsList != null, "Missing option: title_weight");
+
+			_cosw = Double.valueOf(options.get("cosine_weight"));
+			Check(_stopWordsList != null, "Missing option: cosine_weight");
+			
+			_catw = Double.valueOf(options.get("category_weight"));
+			Check(_stopWordsList != null, "Missing option: category_weight");
+
 		}
 	}
 
