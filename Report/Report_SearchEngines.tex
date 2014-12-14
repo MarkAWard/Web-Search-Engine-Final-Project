@@ -68,7 +68,7 @@ Many users now-a-days look for local businesses or places to dine at on the web.
 \paragraph{}Since, the users issue keyword based search queries, we build an index that acts a lookup for words that occur  We read in 56,000 text files containing information about businesses along with their reviews and other meta-data and stored it in the form of an inverted index using byte encoding to compress it. We built an inverted index of words occurring in the review text and score them based on the occurrences in the text.
 
 \subsection{Ranking}
-\subsubsection{Ranking based on Title, Categories and Businesses}
+\subsubsection{Ranking based on Title, Categories and Reviews}
 \paragraph{}Ranking based on the terms contained in the review text is more likely to retrieve relevant businesses. The first thing we do while retrieving is to try and match the queries with the title of the businesses, since retrieval of a business matching the query issued should be fast and thus the title is weighed heavily. We also look for matches in the categories the business belongs to. 
 \subsubsection{Ranking based on number of Reviews and Ratings}
 \paragraph{}Including number of reviews of a business in our ranking definitely improves the retrieval for a search query. The idea behind including number of reviews is that if a business has more reviews, then certainly a lot of people have used it for its services and this would further enhance the business' credibility. Just because a business has more reviews does not make it a good business. Including a measure of how good the business is for it's services in terms of ratings would retrieve top businesses. Addition of ratings with the number of reviews adds to the improvement and now the retrieval is not just better in terms of whether the query is matched to the business but also the credibility of the business and how good the business is for it's services. Number of reviews can be equivalent to the number of views of a document on a web page.    
@@ -94,10 +94,19 @@ Many users now-a-days look for local businesses or places to dine at on the web.
 
 \subsection{Recommendation using Map-Reduce framework}
 \subsubsection{Algorithm}
-\subsection{Querying businesses}
-\
-\subsection{Querying businesses based on key-words}
-\subsection{Geographic Location based Searching}
+\subsection{Ranking}
+\paragraph{}In the previous section, we discussed the different features being used for ranking the businesses being retrieved by the engine. Intuitively one would think about using a linear ranking that generates scores based on different features, weighing them and add the scores linearly. But this doesn't improve the retrieval as will be discussed in the next section. Taking a product of the scores based on different features improves the retrieval to a certain extent. 
+
+The reason ranking is done multiplicatively is because if score from one of the features is high while the score from another is low, the overall score does not increase to a great extent. This way of aggressively ranking the businesses results in retrieval of businesses that truly satisfy almost all the requirements. 
+\begin{center}
+total score = \underline{(cosine score)x(score number of reviews)x(score ratings)}
+                             \\  distance
+
+\end{center}
+\subsection{Querying}
+\paragraph{}One can search businesses directly by simply putting in the name of the businesses. The engine returns the corresponding business the user was looking for along with similar businesses based on the similarity computed from term matches and similar businesses looked by other users. 
+\paragraph{}The other way one could issue queries would be to find businesses that meet certain requirements like \textit{Mexican Restaurants}. The engine retrieves businesses that match the term not only in the Categories and the titles, but also in the review text. The resulting retrieval is ranked based on Cosine similarity, location, number of reviews and ratings.
+\paragraph{}Geographic location based retrieval is the other part of the project, we focussed on. The engine not only retrieves businesses that match the query but also makes sure the businesses are situated in the region from where the query is issued. 
 \section{Evaluation}
 
 
