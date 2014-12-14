@@ -135,7 +135,7 @@ function success(position) {
         $("#googleMap").empty();
 
         validity =true;
-        $('input[type="text"]').each(function() {
+        $('#street').each(function() {
             if ($(this).val().trim() == "") {
                 var i = $(this).attr('id') + "par";
                 $('#'+i).html("Hey! You gotta give a query !");
