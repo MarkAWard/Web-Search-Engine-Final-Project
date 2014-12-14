@@ -5,10 +5,13 @@ import org.json.simple.JSONObject;
 class ScoredDocument implements Comparable<ScoredDocument> {
 	private Document _doc;
 	private double _score;
+	private double _distance;
 
-	public ScoredDocument(Document doc, double score) {
+
+	public ScoredDocument(Document doc, double score, double distance) {
 		set_doc(doc);
 		_score = score;
+		_distance = distance;
 	}
 
 	public String asTextResult() {
@@ -53,6 +56,12 @@ class ScoredDocument implements Comparable<ScoredDocument> {
 
 	public Document get_doc() {
 		return _doc;
+	}
+	public double get_score() {
+		return _score;
+	}
+	public double get_distance() {
+		return _distance;
 	}
 
 	public void set_doc(Document _doc) {

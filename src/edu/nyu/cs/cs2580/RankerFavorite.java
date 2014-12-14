@@ -71,7 +71,7 @@ class RankerFavorite extends Ranker {
 
     double score = title_score + cosine_score; 
 
-    return new ScoredDocument(document, score);
+    return new ScoredDocument(document, score, 0.0);
   }
 
   private double runquery_title(Query query, Document doc) {
