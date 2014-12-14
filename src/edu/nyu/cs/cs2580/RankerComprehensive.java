@@ -1,5 +1,6 @@
 package edu.nyu.cs.cs2580;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -124,7 +125,13 @@ public class RankerComprehensive extends Ranker {
 	}
 
 	private double runquery_title(Query query, Document doc) {
-		String title = Cleaner.cleanAndStem(doc.getTitle());
+		String title = doc.getTitle();
+		try {
+			title = Cleaner.cleanAndStem(title);
+		} catch (IOException e) {
+			System.err.println("Could not clean query: " + e.getMessage());
+		}
+
 		Vector<String> titleTokens = new Vector<String>( Arrays.asList(title.split(" ")) );    
 		double size = (double) query._tokens.size();
 		titleTokens.retainAll(query._tokens); 
@@ -136,16 +143,20 @@ public class RankerComprehensive extends Ranker {
 
 	private double runquery_categories(Query query, Document doc) {
 		double score = 0.0;
-		double size = (double) query._tokens.size();
 		Vector<String> categories = doc.get_categories();
 		Vector<String> cat_tokens = null;
 		for(String cats : categories) {
-			cat_tokens = new Vector<String>(Arrays.asList(Cleaner.cleanAndStem(cats).split(" ")));
+			try {
+				cats = Cleaner.cleanAndStem(cats);
+			} catch (IOException e) {
+				System.err.println("Could not clean query: " + e.getMessage());
+			}
+			cat_tokens = new Vector<String>(Arrays.asList(cats.split(" ")));
 			cat_tokens.retainAll(query._tokens);
 			score += cat_tokens.size();
 		}
 		cat_tokens = null;
-		return score/size;
+		return score;
 	}
 
 	private double runquery_cosine(Query query, Document doc) {
