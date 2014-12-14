@@ -147,8 +147,6 @@ public class RankerComprehensive extends Ranker {
 		double size = (double) titleTokens.size();
 		queryTokens.retainAll(titleTokens); 
 		double score = queryTokens.size() / size;
-		
-		System.out.println("Here");
 
 		return score;
 	}
