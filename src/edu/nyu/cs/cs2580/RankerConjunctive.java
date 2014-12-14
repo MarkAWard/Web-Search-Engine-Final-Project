@@ -103,7 +103,7 @@ private ScoredDocument scoreDocument(Query query, Document document) {
 
     double score = title_score + cosine_score;
 
-    return new ScoredDocument(document, score, 0.0);
+    return new ScoredDocument(document, score);
 }
 
 private double runquery_title(Query query, Document doc) {

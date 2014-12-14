@@ -52,17 +52,24 @@ public class RankerComprehensive extends Ranker {
 				}
 
 				if(j==qp.phrase.size())
-					all.add(scoreDocument(query, i, latitude, longitude));
+					all.add(scoreDocument(query, i));
 			}
 			else {
 	  		//System.out.println(  " Docid: " + i._docid + " Docname: " + i.getTitle() );	
-				all.add(scoreDocument(query, i, latitude, longitude));	
+				all.add(scoreDocument(query, i));	
 			}
 
 			i = _indexer.nextDoc(query,i._docid);
 		}
 
 		// sort all return results
+		Collections.sort(all, Collections.reverseOrder());
+
+		// keep top 100 most relevent
+		if (all.size() > 100) all.subList(100, all.size()).clear();
+
+		// multiply in reciprocal distance
+		rerank(all, latitude, longitude);
 		Collections.sort(all, Collections.reverseOrder());
 
 		System.out.println("--------");
@@ -73,12 +80,11 @@ public class RankerComprehensive extends Ranker {
 		for (int j2 = 0; j2 < all.size() && j2 < numResults*2; ++j2)
 		{
 			ScoredDocument d  = all.get(j2);
-			System.out.println(" Doc: " + d.get_doc().getTitle() + " Distance: " + d.get_distance() + " Score: " + d.get_score());
+			System.out.println(" Doc: " + d.get_doc().getTitle() + " MILES: " + d.get_distance() + " COSINE: " + d.get_cosine()
+								+ " TITLE: " + d.get_title() + " CATEGORY: " + d.get_category() + " SCORE: " + d.get_score());
 		}
 
 
-
-		// rerank(all, latitude, longitude);
 		// Collections.sort(all, Collections.reverseOrder());
 
 
@@ -100,17 +106,19 @@ public class RankerComprehensive extends Ranker {
 	}
 
 
-	private ScoredDocument scoreDocument(Query query, Document document, double latitude, double longitude) {
-		double distance_score = runquery_distance(document, latitude, longitude);
-		if (distance_score > 100.0) return new ScoredDocument(document, (25.0 / distance_score), distance_score);
-
+	private ScoredDocument scoreDocument(Query query, Document document) {
 		double title_score = runquery_title(query, document);
 		double cosine_score = runquery_cosine(query, document);
 		double category_score = runquery_categories(query, document);
 
-		// inflate score if within 25 miles else decrease score
-		double score = (title_score + cosine_score + category_score) * (25.0 / distance_score);
-		return new ScoredDocument(document, score, distance_score);
+		double score = (title_score + cosine_score + category_score);
+		ScoredDocument sdoc = new ScoredDocument(document, score);
+		
+		sdoc.set_title(title_score);
+		sdoc.set_cosine(cosine_score);
+		sdoc.set_category(category_score);
+
+		return sdoc;
 	}
 
 	private double runquery_title(Query query, Document doc) {
@@ -168,92 +176,78 @@ public class RankerComprehensive extends Ranker {
 	}
 
 
-	private double runquery_distance(Document doc, double latitude, double longitude) {
-		return distance(doc.get_lati(), doc.get_longi(), latitude, longitude);
-	}
+	// private double runquery_distance(Document doc, double latitude, double longitude) {
+	// 	return distance(doc.get_lati(), doc.get_longi(), latitude, longitude);
+	// }
 
 
-	private void rerank(Vector<ScoredDocument> orig_ranks, double latitudes, double longitudes) {
+	private void rerank(Vector<ScoredDocument> orig_ranks, double latitude, double longitude) {
 
-		ArrayList<Tuple<ScoredDocument, Double>> numviews_tuples = new ArrayList<Tuple<ScoredDocument, Double>>();
-		ArrayList<Tuple<ScoredDocument, Double>> stars_tuples = new ArrayList<Tuple<ScoredDocument, Double>>();
-		ArrayList<Tuple<ScoredDocument, Double>> locs_tuples = new ArrayList<Tuple<ScoredDocument, Double>>();
-    // rerank the top 50 documents
+//		ArrayList<Tuple<ScoredDocument, Double>> locs_tuples = new ArrayList<Tuple<ScoredDocument, Double>>();
+
+	    // rerank the top 50 documents
 		for (int i = 0; i < orig_ranks.size(); i++) {
 			ScoredDocument sdoc = orig_ranks.get(i);
-			stars_tuples.add(new Tuple<ScoredDocument, Double>(sdoc, sdoc.get_doc().get_stars()));
-			numviews_tuples.add(new Tuple<ScoredDocument, Double>(sdoc, (double) sdoc.get_doc().get_num_Reviews()));
-			locs_tuples.add(new Tuple<ScoredDocument, Double>(sdoc, (double) sdoc.get_doc().get_lati()));
+			double distance = distance(sdoc.get_doc().get_lati(), sdoc.get_doc().get_longi(), latitude, longitude);
+			sdoc.set_distance(distance);
+			sdoc.updateScore(1.0/distance);
+//			locs_tuples.add(new Tuple<ScoredDocument, Double>(sdoc, distance));
 		}
 
-		Comparator< Tuple<ScoredDocument, Double>> comparator = new Comparator<Tuple<ScoredDocument, Double>>() {
-			public int compare(Tuple<ScoredDocument, Double>tupleA, Tuple<ScoredDocument, Double> tupleB) {
-        // tupleB then tuple A to do descending order
-				return tupleB.getSecond().compareTo(tupleA.getSecond());
-			}
-		};
-		Collections.sort(numviews_tuples, comparator);
+		// Comparator< Tuple<ScoredDocument, Double>> comparator = new Comparator<Tuple<ScoredDocument, Double>>() {
+		// 	public int compare(Tuple<ScoredDocument, Double>tupleA, Tuple<ScoredDocument, Double> tupleB) {
+  //       		// tupleB then tuple A to do descending order
+		// 		return tupleB.getSecond().compareTo(tupleA.getSecond());
+		// 	}
+		// };
+		// Collections.sort(locs_tuples, comparator);
+		// int i;
+		// for (i = 0; i < locs_tuples.size() && i < 50; i++) {
+		// 	ScoredDocument sdoc = locs_tuples.get(i).getFirst();
 
-		for (int i = 0; i < numviews_tuples.size(); i++) {
-			ScoredDocument sdoc2 = numviews_tuples.get(i).getFirst();
-			ScoredDocument sdoc1 = stars_tuples.get(i).getFirst();
-			ScoredDocument sdoc3 = locs_tuples.get(i).getFirst();
-			double score, lats, longs;
-			double score1, s, locs;
-			if (isBetween(i, 0, 9)){
-				score = 1;
-			} else if (isBetween(i, 10,19)) {
-				score = 0.8;
-			} else if (isBetween(i, 20,29)) {
-				score = 0.6;
-			} else if (isBetween(i, 30,39)) {
-				score = 0.4;        
-			} else if (isBetween(i, 40, 49)) {
-				score = 0.2;
-			} else {
-				score = 0.1;
-			}
-
-			lats = locs_tuples.get(i).getFirst().get_doc().get_lati();
-			longs = locs_tuples.get(i).getFirst().get_doc().get_longi();
-
-			double latDiff = lats - latitudes;
-			double longDiff = longs - longitudes;
-			double latSqr = Math.pow(latDiff,2);
-			double longSqr = Math.pow(longDiff,2);
-
-			locs = -1 * Math.sqrt(latSqr + longSqr);
+		// 	if (isBetween(i, 0, 9)){
+		// 		score = 1;
+		// 	} else if (isBetween(i, 10,19)) {
+		// 		score = 0.8;
+		// 	} else if (isBetween(i, 20,29)) {
+		// 		score = 0.6;
+		// 	} else if (isBetween(i, 30,39)) {
+		// 		score = 0.4;        
+		// 	} else if (isBetween(i, 40, 49)) {
+		// 		score = 0.2;
+		// 	} else {
+		// 		score = 0.1;
+		// 	}
 
 
-      //System.out.println(locs); 
-			s = stars_tuples.get(i).getSecond();
-			sdoc1.updateScore(s);
-			sdoc2.updateScore(score);
-			sdoc3.updateScore(locs);
-		}
-
+  //     //System.out.println(locs); 
+		// 	s = stars_tuples.get(i).getSecond();
+		// 	sdoc1.updateScore(s);
+		// 	sdoc2.updateScore(score);
+		// 	sdoc3.updateScore(locs);
+		// }
 
 	}
 
-	private boolean isBetween(int x, int lower, int upper) {
-		return lower <= x && x <= upper;
-	}
+	// private boolean isBetween(int x, int lower, int upper) {
+	// 	return lower <= x && x <= upper;
+	// }
 
 	
-	private double isThere(String s, Vector<String> C)
-	{   Vector<String> catTokens = new Vector<String>();
-		double val = 0;
-		for (int j = 0; j < C.size(); j++)
-		{
-			String c = C.get(j);
-			catTokens = (Vector <String>) ( Arrays.asList(c.toLowerCase().split(" ")) );
-			if (catTokens.contains(s.toLowerCase()))
-			{
-				val = 1;
-			}
-		}
-		return val;
-	}
+	// private double isThere(String s, Vector<String> C)
+	// {   Vector<String> catTokens = new Vector<String>();
+	// 	double val = 0;
+	// 	for (int j = 0; j < C.size(); j++)
+	// 	{
+	// 		String c = C.get(j);
+	// 		catTokens = (Vector <String>) ( Arrays.asList(c.toLowerCase().split(" ")) );
+	// 		if (catTokens.contains(s.toLowerCase()))
+	// 		{
+	// 			val = 1;
+	// 		}
+	// 	}
+	// 	return val;
+	// }
 	
 
 	// calculate haversine distance in miles

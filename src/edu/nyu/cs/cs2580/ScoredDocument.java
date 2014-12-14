@@ -7,11 +7,14 @@ class ScoredDocument implements Comparable<ScoredDocument> {
 	private double _score;
 	private double _distance;
 
+	private double _cosine;
+	private double _title;
+	private double _category;
 
-	public ScoredDocument(Document doc, double score, double distance) {
+
+	public ScoredDocument(Document doc, double score) {
 		set_doc(doc);
 		_score = score;
-		_distance = distance;
 	}
 
 	public String asTextResult() {
@@ -54,21 +57,45 @@ class ScoredDocument implements Comparable<ScoredDocument> {
 		return (this._score > o._score) ? 1 : -1;
 	}
 
+	public void set_doc(Document _doc) {
+		this._doc = _doc;
+	}
 	public Document get_doc() {
 		return _doc;
 	}
+
+	public void updateScore(double additional) {
+		_score *= additional;
+	}
 	public double get_score() {
 		return _score;
+	}
+
+	public void set_distance(double distance) {
+		this._distance = distance;
 	}
 	public double get_distance() {
 		return _distance;
 	}
 
-	public void set_doc(Document _doc) {
-		this._doc = _doc;
+	public void set_cosine(double cosine) {
+		this._cosine = cosine;
+	}
+	public double get_cosine() {
+		return _cosine;
 	}
 
-	public void updateScore(double additional) {
-		_score += additional;
+	public void set_title(double title) {
+		this._title = title;
+	}
+	public double get_title() {
+		return _title;
+	}
+
+	public void set_category(double category) {
+		this._category = category;
+	}
+	public double get_category() {
+		return _category;
 	}
 }
