@@ -142,12 +142,12 @@ public class RankerComprehensive extends Ranker {
 		Vector<String> queryTokens = query._tokens;
 		Vector<String> titleTokens = new Vector<String>( Arrays.asList(title.split(" ")) ); 
 		double size = (double) titleTokens.size();
+		System.out.println(size);
 		queryTokens.retainAll(titleTokens); 
 		double score = queryTokens.size() / size;
 
 		return score;
 	}
-
 
 	private double runquery_categories(Query query, Document doc) {
 		double score = 0.0;
