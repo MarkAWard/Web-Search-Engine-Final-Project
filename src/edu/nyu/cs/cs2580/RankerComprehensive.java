@@ -26,7 +26,7 @@ public class RankerComprehensive extends Ranker {
   }
 
   @Override
-  public Vector<ScoredDocument> runQuery(Query query, int numResults) {
+  public Vector<ScoredDocument> runQuery(Query query, int numResults, double latitude, double longitude) {
 	
 	Vector<ScoredDocument> all = new Vector<ScoredDocument>();
 
@@ -61,10 +61,32 @@ public class RankerComprehensive extends Ranker {
 	    
 	    i = _indexer.nextDoc(query,i._docid);
 	}
+	System.out.println("--------");
+	//Collections.sort(all, Collections.reverseOrder());
+   	System.out.println("Printing from Ranker Comprehensive.java");
+	System.out.println("Sorting based on Text only");
+	System.out.println("Number of Reviews of Top Docs retrieved");
+	for (int j2 = 0; j2 < all.size() && j2 < numResults; ++j2)
+	{
+	ScoredDocument d  = all.get(j2);
+	System.out.println(" Doc " + d.get_doc().getTitle() + " Reviews " + d.get_doc().get_num_Reviews());
+	}
+       
 
-	Collections.sort(all, Collections.reverseOrder());
-    rerank(all);
-    //Collections.sort(all, Collections.reverseOrder());
+
+    rerank(all, latitude, longitude);
+    Collections.sort(all, Collections.reverseOrder());
+
+
+	System.out.println("--------------");
+	System.out.println("Sorting on reviews+stars+location, Using top 100 documents instead of 50 (Used in Ass3)");
+	System.out.println("Number of Reviews for the sorted set");
+
+    for (int j3 = 0; j3 < all.size() && j3 < numResults; ++j3)
+        {
+        ScoredDocument d  = all.get(j3);
+        System.out.println(" Doc " + d.get_doc().getTitle() + " Reviews " +d.get_doc().get_num_Reviews());
+        }
 
     Vector<ScoredDocument> results = new Vector<ScoredDocument>();    
     for (int j1 = 0; j1 < all.size() && j1 < numResults; ++j1)
@@ -74,15 +96,17 @@ public class RankerComprehensive extends Ranker {
   }
 
 
-  private void rerank(Vector<ScoredDocument> orig_ranks) {
+  private void rerank(Vector<ScoredDocument> orig_ranks, double latitudes, double longitudes) {
 
     ArrayList<Tuple<ScoredDocument, Double>> numviews_tuples = new ArrayList<Tuple<ScoredDocument, Double>>();
-
-
+    ArrayList<Tuple<ScoredDocument, Double>> stars_tuples = new ArrayList<Tuple<ScoredDocument, Double>>();
+    ArrayList<Tuple<ScoredDocument, Double>> locs_tuples = new ArrayList<Tuple<ScoredDocument, Double>>();
     // rerank the top 50 documents
-    for (int i = 0; i < orig_ranks.size() && i < 55; i++) {
+    for (int i = 0; i < orig_ranks.size(); i++) {
         ScoredDocument sdoc = orig_ranks.get(i);
+        stars_tuples.add(new Tuple<ScoredDocument, Double>(sdoc, sdoc.get_doc().get_stars()));
         numviews_tuples.add(new Tuple<ScoredDocument, Double>(sdoc, (double) sdoc.get_doc().get_num_Reviews()));
+        locs_tuples.add(new Tuple<ScoredDocument, Double>(sdoc, (double) sdoc.get_doc().get_lati()));
     }
     
     Comparator< Tuple<ScoredDocument, Double>> comparator = new Comparator<Tuple<ScoredDocument, Double>>() {
@@ -92,28 +116,45 @@ public class RankerComprehensive extends Ranker {
       }
     };
     Collections.sort(numviews_tuples, comparator);
-    /*
+    
     for (int i = 0; i < numviews_tuples.size(); i++) {
       ScoredDocument sdoc2 = numviews_tuples.get(i).getFirst();
-
-      double score;
-      if (isBetween(i, 0, 40)){
-        score = 0.1;
-      } else if (isBetween(i, 41, 80)) {
-        score = 0.2;        
-      } else if (isBetween(i, 81, 150)) {
-        score = 0.4;        
-      } else if (isBetween(i, 151, 400)) {
-        score = 0.6;        
-      } else if (isBetween(i, 400, 1000)) {
-        score = 0.8;        
-      } else {
+      ScoredDocument sdoc1 = stars_tuples.get(i).getFirst();
+      ScoredDocument sdoc3 = locs_tuples.get(i).getFirst();
+      double score, lats, longs;
+      double score1, s, locs;
+      if (isBetween(i, 0, 9)){
         score = 1;
+      } else if (isBetween(i, 10,19)) {
+        score = 0.8;
+      } else if (isBetween(i, 20,29)) {
+        score = 0.6;
+      } else if (isBetween(i, 30,39)) {
+        score = 0.4;        
+      } else if (isBetween(i, 40, 49)) {
+        score = 0.2;
+      } else {
+        score = 0.1;
       }
-
+      
+      lats = locs_tuples.get(i).getFirst().get_doc().get_lati();
+      longs = locs_tuples.get(i).getFirst().get_doc().get_longi();
+      
+      double latDiff = lats - latitudes;
+      double longDiff = longs - longitudes;
+      double latSqr = Math.pow(latDiff,2);
+      double longSqr = Math.pow(longDiff,2);
+      
+      locs = -1 * Math.sqrt(latSqr + longSqr);
+      
+      
+      //System.out.println(locs); 
+      s = stars_tuples.get(i).getSecond();
+      sdoc1.updateScore(s);
       sdoc2.updateScore(score);
+      sdoc3.updateScore(locs);
     }
-	*/
+	
 
 }
 
@@ -125,28 +166,57 @@ public class RankerComprehensive extends Ranker {
 
 
 	private ScoredDocument scoreDocument(Query query, Document document) {
-		double title_score = runquery_title(query, document);
+	    double title_score = runquery_title(query, document);
 	    double cosine_score = runquery_cosine(query, document);
-		
-	    double score = title_score + cosine_score;
-	    if (title_score >0.0)
-	    {	
-	    	System.out.println(title_score);
-		System.out.println(document.getTitle());
-	    }
+	    //double category_score = runquery_categories(query, document);
+	    //if (category_score>0.0)
+	    //{
+	    //	System.out.println(category_score);
+	    //}
+	    double score = title_score + cosine_score ;
 	    return new ScoredDocument(document, score);
 	}
 
 	private double runquery_title(Query query, Document doc) {
 	    String title = ((DocumentIndexed) doc).getTitle();
 	    Vector<String> titleTokens = new Vector<String>( Arrays.asList(title.split(" ")) );    
-	    //System.out.println(title);
 	    double size = (double) query._tokens.size();
 	    titleTokens.retainAll(query._tokens); 
 	    double score = titleTokens.size() / size;
 
 	    return score;
 	  }
+
+	
+	private double isThere(String s, Vector<String> C)
+	    {   Vector<String> catTokens = new Vector<String>();
+		double val = 0;
+		for (int j = 0; j < C.size(); j++)
+		{
+		    String c = C.get(j);
+		    catTokens = (Vector <String>) ( Arrays.asList(c.toLowerCase().split(" ")) );
+		    if (catTokens.contains(s.toLowerCase()))
+		    {
+		    	val = 1;
+		    }
+		}
+		return val;
+	    }
+		
+	private double runquery_categories(Query query, Document doc) {
+	    double sums = 0;
+	    for (int i =0; i< query._tokens.size(); i ++)
+	    {
+		sums += isThere(query._tokens.get(i), ((DocumentIndexed) doc).get_categories());	
+	    }
+            
+
+            double size = (double) query._tokens.size();
+	    
+            double score = sums / size;
+
+            return score;
+          }
 
 	  private double runquery_cosine(Query query, Document doc) {
 	    double score = 0.0;

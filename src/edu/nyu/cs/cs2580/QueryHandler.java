@@ -35,7 +35,12 @@ class QueryHandler implements HttpHandler {
 		private int _numResults = 20;
 		private int _numTerms = 10;
 		private int _numDocs = 10;
-
+		//Madison Wisconsin
+		//private double _latitude = 43.0667;
+                //private double _longitude = 89.4000; 
+		// New York
+		private double _latitude = 42.3482;
+		private double _longitude = 75.1890 ;
 		// The type of the ranker we will be using.
 		public enum RankerType {
 			NONE, FULLSCAN, CONJUNCTIVE, FAVORITE, COSINE, PHRASE, QL, LINEAR, COMPREHENSIVE
@@ -92,7 +97,21 @@ class QueryHandler implements HttpHandler {
 						_numTerms = Integer.parseInt(val);
 					} catch (NumberFormatException e) {
 					}
+				} else if (key.equals("latitude")) {
+					try {
+						_latitude = Double.parseDouble(val);
+					} catch (NumberFormatException e) {
+					}
+				} else if (key.equals("longitude")) {
+					try {
+						_longitude = Double.parseDouble(val);
+					} catch (NumberFormatException e) {
+					}
 				}
+				
+				
+				
+				
 			} // End of iterating over params
 		}
 	}
@@ -185,7 +204,7 @@ class QueryHandler implements HttpHandler {
 
 			// Ranking.
 			Vector<ScoredDocument> scoredDocs = ranker.runQuery(processedQuery,
-					cgiArgs._numResults);
+					cgiArgs._numResults, cgiArgs._latitude, cgiArgs._longitude);
 			StringBuffer response = new StringBuffer();
 			switch (cgiArgs._outputFormat) {
 			case TEXT:
