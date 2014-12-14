@@ -1,3 +1,18 @@
 #tags {
 	width: 200px;
 }
+
+#name-group {
+	width: 651px; 
+	height: 124px; 
+	margin-left: 25%
+}
+
+#logo {
+	width: 251px; 
+	height: 240px;
+}
+
+.top-buffer { 
+	margin-top:20px; 
+}
