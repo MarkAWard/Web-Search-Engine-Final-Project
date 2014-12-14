@@ -17,9 +17,8 @@ function extractLast( term )
 var myCenter;
 var mynewCenter;
 
-var directionsDisplay;
+var directionsDisplay = new google.maps.DirectionsRenderer();
 var directionsService = new google.maps.DirectionsService();
-directionsDisplay = new google.maps.DirectionsRenderer();
 var origin_lat=36.114588;
 var origin_long=-115.161922;
 var dest_lat;
@@ -31,23 +30,23 @@ function calcRoute() {
   var request = {
       origin: myCenter ,
       destination: mynewCenter,
-      
       travelMode: google.maps.TravelMode[selectedMode]
-  };
+    };
   directionsService.route(request, function(response, status) {
     if (status == google.maps.DirectionsStatus.OK) {
       directionsDisplay.setDirections(response);
-  }
-});
+    }
+  });
 }
+
 var l1=0;
 var l2=0;
 function success(position) {
  l1  = position.coords.latitude;
  l2 = position.coords.longitude;
- 
- 
- 
+
+
+
  var validity =true;
  var valids=true;
 
