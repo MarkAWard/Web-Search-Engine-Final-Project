@@ -134,18 +134,16 @@ public class RankerComprehensive extends Ranker {
 			System.err.println("Could not clean query: " + e.getMessage());
 		}
 
-//		Vector<String> titleTokens = new Vector<String>( Arrays.asList(title.split(" ")) );    
-//		double size = (double) query._tokens.size();
-//		titleTokens.retainAll(query._tokens); 
-//		double score = titleTokens.size() / size;
+		Vector<String> titleTokens = new Vector<String>( Arrays.asList(title.split(" ")) );    
+		double size = (double) query._tokens.size();
+		titleTokens.retainAll(query._tokens); 
+		double score = titleTokens.size() / size;
 		
-		Vector<String> queryTokens = query._tokens;
-		Vector<String> titleTokens = new Vector<String>( Arrays.asList(title.split(" ")) ); 
-		double size = (double) titleTokens.size();
-		
-		queryTokens.retainAll(titleTokens); 
-		
-		double score = queryTokens.size() / size;
+//		Vector<String> queryTokens = query._tokens;
+//		Vector<String> titleTokens = new Vector<String>( Arrays.asList(title.split(" ")) ); 
+//		double size = (double) titleTokens.size();
+//		queryTokens.retainAll(titleTokens); 
+//		double score = queryTokens.size() / size;
 
 		return score;
 	}
