@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2014.12.1)  14 DEC 2014 07:50
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2014.12.1)  14 DEC 2014 08:58
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -266,51 +266,48 @@ LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <12> not available
 (Font)              Font shape `OT1/ptm/b/n' tried instead on input line 52.
  [1{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}
 
-] [2]
+]
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [2]
 LaTeX Font Info:    External font `cmex10' loaded for size
 (Font)              <9> on input line 130.
 LaTeX Font Info:    External font `cmex10' loaded for size
 (Font)              <6> on input line 130.
 
-Underfull \vbox (badness 1038) has occurred while \output is active []
+[3]
+LaTeX Font Info:    Try loading font information for OMS+ptm on input line 201.
 
- [3]
-LaTeX Font Info:    Try loading font information for OMS+ptm on input line 207.
-
-
-(/usr/share/texlive/texmf-dist/tex/latex/psnfss/omsptm.fd
+ (/usr/share/texlive/texmf-dist/tex/latex/psnfss/omsptm.fd
 File: omsptm.fd 
 )
 LaTeX Font Info:    Font shape `OMS/ptm/m/n' in size <10> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 207.
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 201.
  [4]
 LaTeX Font Info:    Font shape `OT1/ptm/bx/it' in size <10> not available
-(Font)              Font shape `OT1/ptm/b/it' tried instead on input line 321.
-LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <9> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 336.
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 339.
+(Font)              Font shape `OT1/ptm/b/it' tried instead on input line 315.
  [5]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 339.
+LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <9> not available
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 330.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 333.
+ [6]
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 333.
 
 (./Report_SearchEngines.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 339.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 339.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 333.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 333.
 Package rerunfilecheck Info: File `Report_SearchEngines.out' has not changed.
-(rerunfilecheck)             Checksum: 606A75A983BE4569DB76F8B581241E38;1653.
-
-
-LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
-
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 339.
+(rerunfilecheck)             Checksum: C525FA75D7792B8A8F44468BA2E93DEE;1557.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 333.
  ) 
 Here is how much of TeX's memory you used:
- 5539 strings out of 494985
- 80615 string characters out of 6180356
- 168906 words of memory out of 5000000
- 8674 multiletter control sequences out of 15000+600000
+ 5538 strings out of 494985
+ 80584 string characters out of 6180356
+ 168904 words of memory out of 5000000
+ 8672 multiletter control sequences out of 15000+600000
  28205 words of font info for 50 fonts, out of 8000000 for 9000
  36 hyphenation exceptions out of 8191
- 37i,12n,39p,773b,444s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 37i,12n,39p,909b,440s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/share/texlive/texmf-dist/fonts/enc/dvips/base/8r.enc}</usr/share/texliv
 e/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texlive/texm
 f-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist
@@ -319,10 +316,10 @@ urw/helvetic/uhvb8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/ut
 mb8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmbi8a.pfb></usr
 /share/texlive/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/share/texlive/
 texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on Report_SearchEngines.pdf (5 pages, 106282 bytes).
+Output written on Report_SearchEngines.pdf (6 pages, 107175 bytes).
 PDF statistics:
- 190 PDF objects out of 1000 (max. 8388607)
+ 191 PDF objects out of 1000 (max. 8388607)
  173 compressed objects within 2 object streams
- 42 named destinations out of 1000 (max. 500000)
- 193 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 43 named destinations out of 1000 (max. 500000)
+ 185 words of extra memory for PDF output out of 10000 (max. 10000000)
 

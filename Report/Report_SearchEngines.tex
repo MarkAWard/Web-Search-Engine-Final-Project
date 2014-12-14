@@ -69,10 +69,9 @@ Many users now-a-days look for local businesses or places to dine at on the web.
 
 \subsection{Ranking}
 \subsubsection{Ranking based on Title, Categories and Businesses}
-\paragraph{}Ranking based on the terms contained in the review text is more likely to retrieve relevant businesses. The first thing we do while retrieving is to try and match the queries with the title of the businesses, since retrieval of a business matching the query issued should be fast and thus the title is weighed heavily. We also look for matches in the categories the business belongs to.   
-\subsubsection{Ranking based on Geographic Location}
+\paragraph{}Ranking based on the terms contained in the review text is more likely to retrieve relevant businesses. The first thing we do while retrieving is to try and match the queries with the title of the businesses, since retrieval of a business matching the query issued should be fast and thus the title is weighed heavily. We also look for matches in the categories the business belongs to. 
 \subsubsection{Ranking based on number of Reviews and Ratings}
-
+\paragraph{}Including number of reviews of a business in our ranking definitely improves the retrieval for a search query. The idea behind including number of reviews is that if a business has more reviews, then certainly a lot of people have used it for its services and this would further enhance the business' credibility. Just because a business has more reviews does not make it a good business. Including a measure of how good the business is for it's services in terms of ratings would retrieve top businesses. Addition of ratings with the number of reviews adds to the improvement and now the retrieval is not just better in terms of whether the query is matched to the business but also the credibility of the business and how good the business is for it's services. Number of reviews can be equivalent to the number of views of a document on a web page.    
 \section{Implementation}
 \subsection{Data}
 \paragraph{}We used Yelp's academic dataset to build our search engine. The dataset provides business and review information for nearly 56,000 businesses belonging to Canada UK and the United States. There were a total of 1.9 million reviews and around 100,000 tips. The information was provided in 3 different json files which were merged and written into one text file for each business. The following table shows ...........:
@@ -96,6 +95,7 @@ Many users now-a-days look for local businesses or places to dine at on the web.
 \subsection{Recommendation using Map-Reduce framework}
 \subsubsection{Algorithm}
 \subsection{Querying businesses}
+\
 \subsection{Querying businesses based on key-words}
 \subsection{Geographic Location based Searching}
 \section{Evaluation}
@@ -159,8 +159,7 @@ either in black/white or in color.
 \subsection{Tables}
 
 All tables must be centered, neat, clean and legible. Do not use hand-drawn
-tables. The table number and title always appear before the table. See
-Table~\ref{sample-table}.
+tables. The table number and title always appear before the table. See.
 
 Place one line space before the table title, one line space after the table
 title, and one line space after the table. The table title must be lower case
