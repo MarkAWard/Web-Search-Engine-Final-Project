@@ -139,11 +139,13 @@ public class RankerComprehensive extends Ranker {
 //		titleTokens.retainAll(query._tokens); 
 //		double score = titleTokens.size() / size;
 		
-		Vector<String> queryTokens = query._tokens;
+		
+		
+		Vector<String> queryTokens = new Vector<String>();
+		queryTokens.addAll(query._tokens);
 		Vector<String> titleTokens = new Vector<String>( Arrays.asList(title.split(" ")) ); 
 		double size = (double) titleTokens.size();
-		System.out.println(size);
-		//queryTokens.retainAll(titleTokens); 
+		queryTokens.retainAll(titleTokens); 
 		double score = queryTokens.size() / size;
 		
 		System.out.println("Here");
