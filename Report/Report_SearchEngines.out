@@ -1,0 +1,24 @@
+\BOOKMARK [1][-]{section.1}{Motivation}{}% 1
+\BOOKMARK [1][-]{section.2}{Design and Architecture}{}% 2
+\BOOKMARK [2][-]{subsection.2.1}{Document Processing}{section.2}% 3
+\BOOKMARK [2][-]{subsection.2.2}{Indexing}{section.2}% 4
+\BOOKMARK [2][-]{subsection.2.3}{Ranking}{section.2}% 5
+\BOOKMARK [3][-]{subsubsection.2.3.1}{Ranking based on Title, Categories and Businesses}{subsection.2.3}% 6
+\BOOKMARK [3][-]{subsubsection.2.3.2}{Ranking based on Geographic Location}{subsection.2.3}% 7
+\BOOKMARK [3][-]{subsubsection.2.3.3}{Ranking based on number of Reviews and Ratings}{subsection.2.3}% 8
+\BOOKMARK [1][-]{section.3}{Implementation}{}% 9
+\BOOKMARK [2][-]{subsection.3.1}{Data}{section.3}% 10
+\BOOKMARK [2][-]{subsection.3.2}{Recommendation using Map-Reduce framework}{section.3}% 11
+\BOOKMARK [3][-]{subsubsection.3.2.1}{Algorithm}{subsection.3.2}% 12
+\BOOKMARK [2][-]{subsection.3.3}{Querying businesses}{section.3}% 13
+\BOOKMARK [2][-]{subsection.3.4}{Querying businesses based on key-words}{section.3}% 14
+\BOOKMARK [2][-]{subsection.3.5}{Geographic Location based Searching}{section.3}% 15
+\BOOKMARK [1][-]{section.4}{Evaluation}{}% 16
+\BOOKMARK [1][-]{section.5}{Citations, figures, tables, references}{}% 17
+\BOOKMARK [2][-]{subsection.5.1}{Citations within the text}{section.5}% 18
+\BOOKMARK [2][-]{subsection.5.2}{Footnotes}{section.5}% 19
+\BOOKMARK [2][-]{subsection.5.3}{Figures}{section.5}% 20
+\BOOKMARK [2][-]{subsection.5.4}{Tables}{section.5}% 21
+\BOOKMARK [1][-]{section.6}{Final instructions}{}% 22
+\BOOKMARK [1][-]{section.7}{Preparing PostScript or PDF files}{}% 23
+\BOOKMARK [2][-]{subsection.7.1}{Margins in LaTeX}{section.7}% 24
