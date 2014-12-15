@@ -22,3 +22,19 @@ data/simple
 *.pdf
 
 *.gz
+
+*.aux
+
+*.aux
+
+*.blg
+
+*.bbl
+
+*.log
+
+*.out
+
+*.pdf
+
+*.gz
