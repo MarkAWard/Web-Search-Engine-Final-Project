@@ -108,9 +108,10 @@ public class RankerComprehensive extends Ranker {
 
 		if(findsim)
 		{
-			
+			System.out.println("Here");
 			for(int k=0;k<all.size();k++)
 			{
+				System.out.println("inside for");
 				Vector<Tuple<Double, Integer>> sim_docs = _indexer.get_similardoc(all.get(k).get_doc()._docid);
 				
 				if(sim_docs!=null)
@@ -120,6 +121,7 @@ public class RankerComprehensive extends Ranker {
 						Document d;
 						d = _indexer.getDoc(sim_docs.get(l).getSecond());
 						all.add(scoreDocument(query, d, findsim));
+						System.out.println("inside inner for");
 					}
 				}
 				
