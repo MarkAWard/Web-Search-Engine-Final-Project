@@ -35,6 +35,7 @@ class QueryHandler implements HttpHandler {
 		private int _numResults = 20;
 		private int _numTerms = 10;
 		private int _numDocs = 10;
+		private Boolean _findsim = true;
 		//Madison Wisconsin
 		//private double _latitude = 43.0667;
                 //private double _longitude = 89.4000; 
@@ -100,6 +101,14 @@ class QueryHandler implements HttpHandler {
 				} else if (key.equals("latitude")) {
 					try {
 						_latitude = Double.parseDouble(val);
+					} catch (NumberFormatException e) {
+					}
+				} else if (key.equals("findsim")) {
+					try {
+						if(val.equals("yes"))
+							_findsim = true;
+						else
+							_findsim = false;
 					} catch (NumberFormatException e) {
 					}
 				} else if (key.equals("longitude")) {
@@ -203,7 +212,7 @@ class QueryHandler implements HttpHandler {
 			processedQuery.processQuery();
 
 			// Ranking.
-			Vector<ScoredDocument> scoredDocs = ranker.runQuery(processedQuery, cgiArgs._numResults, cgiArgs._latitude, cgiArgs._longitude);
+			Vector<ScoredDocument> scoredDocs = ranker.runQuery(processedQuery, cgiArgs._numResults, cgiArgs._latitude, cgiArgs._longitude,cgiArgs._findsim);
 			StringBuffer response = new StringBuffer();
 			switch (cgiArgs._outputFormat) {
 			case TEXT:

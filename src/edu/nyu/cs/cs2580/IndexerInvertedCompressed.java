@@ -877,5 +877,10 @@ public class IndexerInvertedCompressed extends Indexer implements Serializable {
 		}
 		return 0;
 	}
+	
+	public Vector<Tuple<Double, Integer>> get_similardoc(int docid)
+	{
+		return _similarities.get(docid);
+	}
 
 }
