@@ -4,7 +4,7 @@
     <title>SAM !</title>
 
     <meta content="text/html; charset=utf-8" http-equiv="content-type">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="//code.jquery.com/ui/1.11.2/themes/smoothness/jquery-ui.css">
@@ -18,24 +18,29 @@
 
 </head>
 <body>
-    <div>
-        <img id="logo" src="logo.png" class="img-responsive center-block">
-    </div>
 
-    <div class="container">
-        <div class="row top-buffer">
-            <div class="span12" id="name-group">
-                <form class="form-inline" >
-                    <input name="name" class="span2 form-control" type="text" id="street" placeholder="Search Business" >
-                    <input name="loc" class="span2 form-control" type="text"  placeholder="Near...">
-                    <button type="button" id="validateBtn" class="btn btn-primary">Search</button>
-                </form>
-            </div>
+<div class="navbar navbar-custom navbar-fixed-top">
+  <div class="navbar-header"><img id="logo" src="logo.png"></div>
+    <div class="navbar-collapse collapse">
+      <form class="navbar-form" name="search-form">
+        <div class="form-inline" >
+          <div class="input-inline">
+
+            <input name="name" class="form-control" type="text" id="street" placeholder="Chipotle, library, iPhone repair..." >
+            <input name="loc" class="form-control" type="text"  placeholder="Near...">
+            <button type="button" id="validateBtn" class="btn btn-success">Search</button>
+
+          </div>
         </div>
+      </form>
     </div>
+</div>
 
-
-    <p id="demo"></p>
+<div id="googleMap"></div>
+<div class="container-fluid" id="main">
+  <div class="row">
+    <div class="col-xs-8" id="left">
+      <p id="demo"></p>
 
     <div id= "hello" style=" margin-left: 6%">
     </div>
@@ -51,5 +56,12 @@
             </td>
         </tr>
     </table>
+
+
+    </div>
+    <div class="col-xs-4"><!--map-canvas will be postioned here--></div>    
+  </div>
+</div>
 </body>
 </html>
+
