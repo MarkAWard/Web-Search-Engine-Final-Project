@@ -1,5 +1,7 @@
 package edu.nyu.cs.cs2580;
 
+import com.google.common.collect.HashBiMap;
+
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
@@ -17,11 +19,13 @@ import edu.nyu.cs.cs2580.SearchEngine.Options;
 public class RankerComprehensive extends Ranker {
 
 	private ReadCorpus Cleaner = new ReadCorpus();
+	public HashBiMap<String, Integer> dictionary = null;
 
 	public RankerComprehensive(Options options, CgiArguments arguments,
 			Indexer indexer) {
 		super(options, arguments, indexer);
 		System.out.println("Using Ranker: " + this.getClass().getSimpleName());
+		dictionary = indexer.getDict();
 	}
 
 	@Override
@@ -32,6 +36,14 @@ public class RankerComprehensive extends Ranker {
 
 		QueryPhrase qp = new QueryPhrase(query._raw);
 		qp.processQuery();
+
+		for(String term : query._tokens) {
+			if(!dictionary.containsKey(term))
+				query._tokens.remove(term);
+		}
+		if (query._tokens.size() == 0) 
+			return NoResults();
+
 
 		Document i = _indexer.nextDoc(query, -1);
 		Double pos;
@@ -127,7 +139,11 @@ public class RankerComprehensive extends Ranker {
 		for (int j1 = 0; j1 < all.size() && j1 < numResults; ++j1)
 			results.add(all.get(j1));
 
-		return results;
+		if (results.size() == 0) {
+			return NoResults();
+		} else {
+			return results;
+		}
 	}
 
 	private ScoredDocument scoreDocument(Query query, Document document,
@@ -257,61 +273,8 @@ public class RankerComprehensive extends Ranker {
 			// distance));
 		}
 
-		// Comparator< Tuple<ScoredDocument, Double>> comparator = new
-		// Comparator<Tuple<ScoredDocument, Double>>() {
-		// public int compare(Tuple<ScoredDocument, Double>tupleA,
-		// Tuple<ScoredDocument, Double> tupleB) {
-		// // tupleB then tuple A to do descending order
-		// return tupleB.getSecond().compareTo(tupleA.getSecond());
-		// }
-		// };
-		// Collections.sort(locs_tuples, comparator);
-		// int i;
-		// for (i = 0; i < locs_tuples.size() && i < 50; i++) {
-		// ScoredDocument sdoc = locs_tuples.get(i).getFirst();
-
-		// if (isBetween(i, 0, 9)){
-		// score = 1;
-		// } else if (isBetween(i, 10,19)) {
-		// score = 0.8;
-		// } else if (isBetween(i, 20,29)) {
-		// score = 0.6;
-		// } else if (isBetween(i, 30,39)) {
-		// score = 0.4;
-		// } else if (isBetween(i, 40, 49)) {
-		// score = 0.2;
-		// } else {
-		// score = 0.1;
-		// }
-
-		// //System.out.println(locs);
-		// s = stars_tuples.get(i).getSecond();
-		// sdoc1.updateScore(s);
-		// sdoc2.updateScore(score);
-		// sdoc3.updateScore(locs);
-		// }
-
 	}
 
-	// private boolean isBetween(int x, int lower, int upper) {
-	// return lower <= x && x <= upper;
-	// }
-
-	// private double isThere(String s, Vector<String> C)
-	// { Vector<String> catTokens = new Vector<String>();
-	// double val = 0;
-	// for (int j = 0; j < C.size(); j++)
-	// {
-	// String c = C.get(j);
-	// catTokens = (Vector <String>) ( Arrays.asList(c.toLowerCase().split(" "))
-	// );
-	// if (catTokens.contains(s.toLowerCase()))
-	// {
-	// val = 1;
-	// }
-	// }
-	// return val;
-	// }
 
 	// calculate haversine distance in miles
 	private double distance(double lat1, double lon1, double lat2, double lon2) {
@@ -325,6 +288,12 @@ public class RankerComprehensive extends Ranker {
 				* Math.sin(dLon / 2) * Math.cos(lat1) * Math.cos(lat2);
 		double c = 2 * Math.asin(Math.sqrt(a));
 		return R * c;
+	}
+
+	private Vector<ScoredDocument> NoResults() {
+		Vector<ScoredDocument> none = new Vector<ScoredDocument>();
+		none.add(new ScoredDocument());
+		return none;
 	}
 
 }

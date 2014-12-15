@@ -17,6 +17,19 @@ class ScoredDocument implements Comparable<ScoredDocument> {
 		_score = score;
 	}
 
+	public ScoredDocument(){
+		Document fake = new Document(-1);
+		fake.setTitle("NO RESULTS");
+		fake.set_lati(0.0);
+		fake.set_longi(0.0);
+		fake.set_stars(0.0);
+		fake.set_address("");
+		fake.setCity("");
+		fake.setUrl("#");
+		fake.set_num_Reviews(0);
+		_score = 0.0;
+	}
+
 	public String asTextResult() {
 		StringBuffer buf = new StringBuffer();
 		buf.append(get_doc()._docid).append("\t");

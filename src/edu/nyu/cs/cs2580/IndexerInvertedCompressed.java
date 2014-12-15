@@ -54,7 +54,7 @@ public class IndexerInvertedCompressed extends Indexer implements Serializable {
 	Tuple<String, Integer> t;
 	private static final long serialVersionUID = 1626440145434710491L;
 
-	private HashBiMap<String, Integer> _dictionary = HashBiMap.create();
+	public HashBiMap<String, Integer> _dictionary = HashBiMap.create();
 	public HashMap<String, Integer> _b_id_to_doc_id = new HashMap<String,Integer>();
 	public HashMap<Integer, Vector<Tuple<Double, Integer>>> _similarities = new HashMap<Integer, Vector<Tuple<Double, Integer>>>();
 	private Map<String, Vector<Integer>> _decoded = new HashMap<String, Vector<Integer>>();
