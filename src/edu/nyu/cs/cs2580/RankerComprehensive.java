@@ -138,7 +138,8 @@ public class RankerComprehensive extends Ranker {
 			sdoc.set_title(title_score);
 			return sdoc;
 		}
-		
+		else
+		{
 		double cosine_score = runquery_cosine(query, document);
 		double category_score = runquery_categories(query, document);
 
@@ -151,6 +152,7 @@ public class RankerComprehensive extends Ranker {
 		sdoc.set_category(category_score);
 
 		return sdoc;
+		}
 	}
 
 	private double runquery_title(Query query, Document doc) {

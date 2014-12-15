@@ -22,6 +22,7 @@ import java.util.Vector;
 
 import com.google.common.collect.HashBiMap;
 
+import edu.nyu.cs.cs2580.IndexerInvertedCompressed.Tuple;
 import edu.nyu.cs.cs2580.SearchEngine.Options;
 
 /**
@@ -402,6 +403,12 @@ private  void processDocument(String content) {
 
 @Override
 public HashBiMap<String, Integer> getDict() {
+	// TODO Auto-generated method stub
+	return null;
+}
+
+@Override
+public Vector<Tuple<Double, Integer>> get_similardoc(int docid) {
 	// TODO Auto-generated method stub
 	return null;
 }
