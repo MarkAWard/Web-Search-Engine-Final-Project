@@ -382,7 +382,7 @@ function success(position) {
             };
             $.ajax({
                 type : 'GET', 
-                url:"http://linserv1.cims.nyu.edu:25808/search",
+                url:"http://linserv2.cims.nyu.edu:25808/search",
                 data : formData, 
                 dataType : 'json',
                 encode : true
