@@ -1,34 +1,28 @@
-\documentclass{article} % For LaTeX2e
+\documentclass[paper=letter, fontsize=15pt]{article} % For LaTeX2e
 \usepackage{nips14submit_e,times}
 \usepackage{hyperref}
 \usepackage{url}
 %\documentstyle[nips14submit_09,times,art10]{article} % For LaTeX 2.09
 
 
-\title{Search Engine for Local and Global Businesses }
+\title{Search Engine for Local and Global Businesses \\ SAM ! }
 
 
 \author{
-Coauthor \\
-Affiliation \\
-Address \\
-\texttt{email} \\
-\AND
-Coauthor \\
-Affiliation \\
-Address \\
-\texttt{email} \\
+Suraj Swaminathan \\
+Courant Institute\\
+New York University \\
+\texttt{ss7359@nyu.edu} \\
 \And
-Coauthor \\
-Affiliation \\
-Address \\
-\texttt{email} \\
+Arpit Jain \\
+Courant Institute\\
+New York University \\
+\texttt{arpitjain@nyu.edu} \\
 \And
-Coauthor \\
-Affiliation \\
-Address \\
-\texttt{email} \\
-(if needed)\\
+Mark Ward \\
+Courant Institute \\
+New York University \\
+\texttt{maw627@nyu.edu} \\
 }
 
 % The \author macro works with any number of authors. There are two commands
@@ -42,7 +36,7 @@ Address \\
 \newcommand{\fix}{\marginpar{FIX}}
 \newcommand{\new}{\marginpar{NEW}}
 
-%\nipsfinalcopy % Uncomment for camera-ready version
+\nipsfinalcopy % Uncomment for camera-ready version
 
 \begin{document}
 
@@ -50,19 +44,54 @@ Address \\
 \maketitle
 
 \begin{abstract}
-Many users now-a-days look for local businesses or places to dine at on the web. With access to a lot of data online, one can go online and search for businesses and read about not only the service provided by the business but also experiences of people who have interacted with them. We have built a search engine that makes it easier for one to find businesses locally based on reviews and ratings provided by their respective customers. We not only provide businesses that a user is looking for, but also recommend other such businesses that the user might like. Many other features have been discussed in this report.
+Many users now-a-days look for local businesses or places to dine at on the web. With access to a lot of data online, one can go online and search for businesses and read about not only the service provided by the business but also experiences of people who have interacted with them. We have built a search engine that makes it easier for one to find businesses locally based on reviews and ratings provided by their respective customers. We not only provide businesses that a user is looking for, but also recommend other such businesses that the user might like. 
+
+In this report we talk about the design and implementation of the system. We briefly discuss the different ranking heuristics applied to improve the search results. We also present the evaluations conducted to judge the system performance. 
 \end{abstract}
 
 \section{Motivation}
 
-\paragraph{}Searching for businesses online has become easier now-a-days. Search engines such as Yelp's has provided users with information about businesses and also opinions of people who have used services provided by the business. Ratings and reviews go a long way in determining the success of a business and people invest considerable amount of time providing their experiences and suggestions as to how could one leverage the business' services to get a positive experience. Our main aim was to make use of this user-generated information to further enhance the information retrieved by our search engine. 
+Searching for businesses online has become easier now-a-days. Search engines such as Yelp \cite{yel} provide users with information about businesses and also opinions of people who have used services provided by the business. Ratings and reviews go a long way in determining the success of a business and people invest considerable amount of time providing their experiences and suggestions as to how could one leverage the business' services to get a positive experience. Our main aim is to make use of this user-generated information to further enhance the information retrieved by our search engine. 
 
-\paragraph{}We leveraged information about businesses and users to build a search engine that not only searches businesses queried by our users but also recommends similar businesses in and around the vicinity of their searches. This similarity is derived from the reviews provided for each business. We also provide recommendations based on user similarity. We used the Map-Reduce framework to get the user-based and the content based similarities. The subsequent sections provide detailed discussions on how we incorporated recommendations into our search engines. The search engine also performs location based personalization such that the retrieved businesses pertain to the region our search engine is being queried from.
 
-\paragraph{}We have built our search engine such that one could not only use it for searching for a specific business but also use free text to look for businesses that provide services which match the user's queries. For example, one could look for places that serve pizzas by querying \textit{pizzas} on our search engine. 
+We leverage information about businesses and users to build a search engine that not only searches businesses queried by our users but also recommends similar businesses in and around the vicinity of their searches. This similarity is derived from the reviews provided for each business. We used the Map-Reduce framework to get the user-based and the content based similarities. The subsequent sections provide detailed discussions on how we incorporated recommendations into our search engines. The search engine also performs location based personalization such that the retrieved businesses pertain to the region our search engine is being queried from.
+We have built our search engine such that one could not only use it for searching for a specific business but also use free text to look for businesses that provide services which match the user's queries. For example, one could look for places that serve pizza by querying \textit{pizza} on our search engine. 
+
+The report is structured as follows. Section 2 talks about the basic architecture of the system and the design considerations. Section 3 discuss the implementation details. The results and evaluation of the system are provided in Section 4 and Section 5 concludes the report.
+
+
 \section{Design and Architecture}
-\subsection{data}
-\paragraph{}We used Yelp's academic dataset to build our search engine. The dataset provides business and review information for nearly 56,000 businesses belonging to Canada UK and the United States. There were a total of 1.9 million reviews and around 100,000 tips. The information was provided in 3 different json files which were merged and written into one text file for each business. The following table shows ...........:
+We first discuss the dataset used to generate the index for the search engine in 2.1.
+
+\subsection{Dataset}
+
+Our system uses Yelp's data. We gathered three different datasets from Yelp and merged them. The three dataset are following
+\begin{itemize}
+\item Yelp academic dataset
+\item Yelp challenge dataset ( March 2015 )
+\item Yelp challenge dataset ( November 2015 )
+\end{itemize}
+The academic dataset includes business near 30 schools in USA including Columbia University and Cornell University form New York state.
+Both the challenge datasets are mainly from Phoenix, Las Vegas, Madison, Waterloo and Edinburgh, however there are many non-overlapping business in both.
+The datasets are divided into majorly four parts
+\begin{itemize}
+\item Business
+\item Review
+\item Tips
+\item User
+\end{itemize}
+Each part is a separate JSON file. The fields of each part as follows.
+
+\begin{table}
+\begin{tabular}{}
+
+\end{tabular}
+
+
+\end{table}
+
+
+We used Yelp's academic dataset to build our search engine. The dataset provides business and review information for nearly 56,000 businesses belonging to Canada UK and the United States. There were a total of 1.9 million reviews and around 100,000 tips. The information was provided in 3 different json files which were merged and written into one text file for each business. The following table shows ...........:
 \begin{center}
     \begin{tabular}{| l | r |}
     \hline
@@ -141,28 +170,8 @@ acknowledgments go at the end of the paper. Do not include
 acknowledgments in the anonymized submission, only in the 
 final paper. 
 
-\subsection*{References}
+\bibliographystyle{IEEEtran}      
+\bibliography{sample}
 
-References follow the acknowledgments. Use unnumbered third level heading for
-the references. Any choice of citation style is acceptable as long as you are
-consistent. It is permissible to reduce the font size to `small' (9-point) 
-when listing the references. {\bf Remember that this year you can use
-a ninth page as long as it contains \emph{only} cited references.}
-
-\small{
-[1] Alexander, J.A. \& Mozer, M.C. (1995) Template-based algorithms
-for connectionist rule extraction. In G. Tesauro, D. S. Touretzky
-and T.K. Leen (eds.), {\it Advances in Neural Information Processing
-Systems 7}, pp. 609-616. Cambridge, MA: MIT Press.
-
-[2] Bower, J.M. \& Beeman, D. (1995) {\it The Book of GENESIS: Exploring
-Realistic Neural Models with the GEneral NEural SImulation System.}
-New York: TELOS/Springer-Verlag.
-
-[3] Hasselmo, M.E., Schnell, E. \& Barkai, E. (1995) Dynamics of learning
-and recall at excitatory recurrent synapses and cholinergic modulation
-in rat hippocampal region CA3. {\it Journal of Neuroscience}
-{\bf 15}(7):5249-5262.
-}
 
 \end{document}

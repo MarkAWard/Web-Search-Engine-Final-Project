@@ -111,7 +111,7 @@ public class RankerComprehensive extends Ranker {
 				Vector<Tuple<Double, Integer>> sim_docs = _indexer
 						.get_similardoc(all.get(k).get_doc()._docid);
 				if (sim_docs != null) {
-					for (int l = 0; l < sim_docs.size() && l < 5; l++) {
+					for (int l = 0; l < sim_docs.size() && l < 10; l++) {
 						Document d;
 						d = _indexer.getDoc(sim_docs.get(l).getSecond());
 						all.add(scoreDocument(query, d, findsim));
