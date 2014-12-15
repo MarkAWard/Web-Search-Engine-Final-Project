@@ -25,9 +25,9 @@ public class RankerComprehensive extends Ranker {
 	}
 
 	@Override
-	public Vector<ScoredDocument> runQuery(Query query, int numResults,double latitude, double longitude, Boolean findsim) {
+	public Vector<ScoredDocument> runQuery(Query query, int numResults,
+			double latitude, double longitude, Boolean findsim) {
 
-		findsim=true;
 		Vector<ScoredDocument> all = new Vector<ScoredDocument>();
 
 		QueryPhrase qp = new QueryPhrase(query._raw);
@@ -50,19 +50,18 @@ public class RankerComprehensive extends Ranker {
 						break;
 				}
 
-				if (j == qp.phrase.size())
-				{
-					ScoredDocument s_doc =scoreDocument(query, i,findsim);
-					if(s_doc.get_score()!=0.0)
-					all.add(s_doc);
-					
+				if (j == qp.phrase.size()) {
+					ScoredDocument s_doc = scoreDocument(query, i, findsim);
+					if (s_doc.get_score() != 0.0)
+						all.add(s_doc);
+
 				}
 			} else {
 				// System.out.println( " Docid: " + i._docid + " Docname: " +
 				// i.getTitle() );
-				ScoredDocument s_doc =scoreDocument(query, i,findsim);
-				if(s_doc.get_score()!=0.0)
-				all.add(s_doc);
+				ScoredDocument s_doc = scoreDocument(query, i, findsim);
+				if (s_doc.get_score() != 0.0)
+					all.add(s_doc);
 			}
 
 			i = _indexer.nextDoc(query, i._docid);
@@ -76,7 +75,7 @@ public class RankerComprehensive extends Ranker {
 			all.subList(100, all.size()).clear();
 
 		// multiply in reciprocal distance
-		rerank(all, latitude, longitude,findsim);
+		rerank(all, latitude, longitude, findsim);
 		Collections.sort(all, Collections.reverseOrder());
 
 		System.out.println("--------");
@@ -106,37 +105,24 @@ public class RankerComprehensive extends Ranker {
 		// +d.get_doc().get_num_Reviews());
 		// }
 
-		if(findsim)
-		{
-			System.out.println("Here");
-			
-			int all_size=all.size();
-			
-			for(int k=0;k<all_size;k++)
-			{
-				System.out.println("inside for");
-				Vector<Tuple<Double, Integer>> sim_docs = _indexer.get_similardoc(all.get(k).get_doc()._docid);
-				
-				if(sim_docs!=null)
-				{
-					for(int l=0;l<sim_docs.size()&&l<5;l++)
-					{
+		if (findsim) {
+			int all_size = all.size();
+			for (int k = 0; k < all_size; k++) {
+				Vector<Tuple<Double, Integer>> sim_docs = _indexer
+						.get_similardoc(all.get(k).get_doc()._docid);
+				if (sim_docs != null) {
+					for (int l = 0; l < sim_docs.size() && l < 5; l++) {
 						Document d;
 						d = _indexer.getDoc(sim_docs.get(l).getSecond());
 						all.add(scoreDocument(query, d, findsim));
-						System.out.println("inside inner for");
 					}
-				}
-				
-				else
-				{
+				} else {
 					all.remove(k);
 				}
-								
 			}
-	
+
 		}
-		
+
 		Vector<ScoredDocument> results = new Vector<ScoredDocument>();
 		for (int j1 = 0; j1 < all.size() && j1 < numResults; ++j1)
 			results.add(all.get(j1));
@@ -144,33 +130,32 @@ public class RankerComprehensive extends Ranker {
 		return results;
 	}
 
-	private ScoredDocument scoreDocument(Query query, Document document, Boolean findsim) {
+	private ScoredDocument scoreDocument(Query query, Document document,
+			Boolean findsim) {
 		double title_score = runquery_title(query, document);
-		
-		if(title_score==1.0 && findsim)
-		{
+
+		if (title_score == 1.0 && findsim) {
 			double score = (_options._titw * title_score);
 			ScoredDocument sdoc = new ScoredDocument(document, score);
 			sdoc.set_title(title_score);
 			return sdoc;
 		}
 
-		else if(!findsim)
-		{
-		double cosine_score = runquery_cosine(query, document);
-		double category_score = runquery_categories(query, document);
+		else if (!findsim) {
+			double cosine_score = runquery_cosine(query, document);
+			double category_score = runquery_categories(query, document);
 
-		double score = (_options._titw * title_score + _options._cosw
-				* cosine_score + _options._catw * category_score);
-		ScoredDocument sdoc = new ScoredDocument(document, score);
+			double score = (_options._titw * title_score + _options._cosw
+					* cosine_score + _options._catw * category_score);
+			ScoredDocument sdoc = new ScoredDocument(document, score);
 
-		sdoc.set_title(title_score);
-		sdoc.set_cosine(cosine_score);
-		sdoc.set_category(category_score);
+			sdoc.set_title(title_score);
+			sdoc.set_cosine(cosine_score);
+			sdoc.set_category(category_score);
 
-		return sdoc;
+			return sdoc;
 		}
-		
+
 		return new ScoredDocument(document, 0.0);
 	}
 
@@ -256,7 +241,7 @@ public class RankerComprehensive extends Ranker {
 	// }
 
 	private void rerank(Vector<ScoredDocument> orig_ranks, double latitude,
-			double longitude,Boolean _nearmes) {
+			double longitude, Boolean _nearmes) {
 
 		// ArrayList<Tuple<ScoredDocument, Double>> locs_tuples = new
 		// ArrayList<Tuple<ScoredDocument, Double>>();
