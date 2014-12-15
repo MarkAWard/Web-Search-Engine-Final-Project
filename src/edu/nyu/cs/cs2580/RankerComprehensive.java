@@ -100,6 +100,7 @@ public class RankerComprehensive extends Ranker {
 		for (int j1 = 0; j1 < all.size() && j1 < numResults; ++j1)
 			results.add(all.get(j1));
 
+		
 		return results;
 	}
 

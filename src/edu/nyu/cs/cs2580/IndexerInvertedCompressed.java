@@ -28,7 +28,11 @@ public class IndexerInvertedCompressed extends Indexer implements Serializable {
 
 	private final Double log_2 = 1 / Math.log(2.0);
 
-	public static class Tuple<T, R> {
+	public static class Tuple<T, R> implements Serializable {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 9067856084405743391L;
 		private T first;
 		private R second;
 
@@ -47,6 +51,7 @@ public class IndexerInvertedCompressed extends Indexer implements Serializable {
 
 	}
 
+	Tuple<String, Integer> t;
 	private static final long serialVersionUID = 1626440145434710491L;
 
 	private HashBiMap<String, Integer> _dictionary = HashBiMap.create();
