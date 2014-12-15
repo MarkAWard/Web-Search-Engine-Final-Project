@@ -25,10 +25,18 @@
       <form class="navbar-form" name="search-form">
         <div class="form-inline" >
           <div class="input-inline">
+            <button name="qryType" type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Business <span class="caret"></span></button>
+              <ul class="dropdown-menu" role="menu">
+                <li><a href="#" >Business</a></li>
+                <li><a href="#" >Similar</a></li>
+                <li><a href="#" >Also Liked</a></li>
+              </ul>
 
             <input name="name" class="form-control" type="text" id="autoQry" placeholder="Chipotle, library, iPhone repair..." >
             <input name="loc" class="form-control" type="text" id="autoLoc" placeholder="Near...">
-            <button type="button" id="validateBtn" class="btn btn-success">Search</button>
+            <button type="button" id="validateBtn" class="btn btn-success">
+                <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+            </button>
 
           </div>
         </div>
@@ -41,17 +49,12 @@
   <div class="row">
     <div class="col-xs-8" id="left">
       <p id="demo"></p>
-
-    <div id= "hello" style=" margin-left: 6%">
+      <div id="hello" style=" margin-right: 6%">
     </div>
     <table>
         <tr>
             <td>
                 <div id="here_table" style=" margin-left: 15%">
-                </div>
-            </td>
-            <td valign="top">
-                <div id="googleMap" style="width:500px;height:380px;align:right;">
                 </div>
             </td>
         </tr>

@@ -7,7 +7,6 @@ var availableTags = [
 var availableCitys = [
 "Current Location",
 "Morningside Heights, NY",
-"Brooklyn, NY",
 "Ithaca, NY",
 "Troy, NY",
 "Albany, NY",
@@ -260,10 +259,6 @@ function success(position) {
                 l1= 40.8089564;
                 l2= -73.9624327;
                 break;
-            case "Brooklyn, NY":
-                l1= 40.65;
-                l2= -73.95;
-                break;
             case "Phoenix, AZ":
                 l1= 33.4483771;
                 l2= -73.9625;
@@ -358,13 +353,32 @@ function success(position) {
                 break;
         }
 
+        var searchType = $('button[name=qryType]').val();
+        var fsim;
+        var flike;
+        if (searchType == "Business") {
+            fsim = "no";
+            flike = "no";
+        }
+        else {
+            if (searchType == "Similar"){
+                fsim = "yes";
+                flike = "no";
+            }
+            else {
+                fsim = "no";
+                flike = "yes";
+            }
+        }
+
         if (validity) {
             var formData = {
                 'query' : $('input[name=name]').val(),
                 'ranker' : 'comprehensive',
                 'latitude': l1,
                 'longitude':l2,
-                'findsim': "yes",
+                'findsim': fsim,
+                'findlike': flike,
             };
             $.ajax({
                 type : 'GET', 
@@ -470,8 +484,16 @@ function error() {
     alert( "Unable to retrieve your location");
 };
 
+$(function(){
 
+    $(".dropdown-menu li a").click(function(){
 
+      $(".btn:first-child").text($(this).text());
+      $(".btn:first-child").val($(this).text());
+
+   });
+
+});
 
 $(document).ready(function() 
 {
