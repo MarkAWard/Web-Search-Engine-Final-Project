@@ -10,8 +10,9 @@
 \BOOKMARK [3][-]{subsubsection.2.6.2}{Ranking based on number of Reviews and Ratings}{subsection.2.6}% 10
 \BOOKMARK [2][-]{subsection.2.7}{Personalization}{section.2}% 11
 \BOOKMARK [1][-]{section.3}{Implementation}{}% 12
-\BOOKMARK [2][-]{subsection.3.1}{Recommendation using Map-Reduce framework}{section.3}% 13
-\BOOKMARK [3][-]{subsubsection.3.1.1}{Algorithm}{subsection.3.1}% 14
-\BOOKMARK [2][-]{subsection.3.2}{Ranking}{section.3}% 15
-\BOOKMARK [2][-]{subsection.3.3}{Querying}{section.3}% 16
-\BOOKMARK [1][-]{section.4}{Evaluation}{}% 17
+\BOOKMARK [2][-]{subsection.3.1}{Recommendations using Map-Reduce framework}{section.3}% 13
+\BOOKMARK [3][-]{subsubsection.3.1.1}{Cosine Similarity Algorithm}{subsection.3.1}% 14
+\BOOKMARK [3][-]{subsubsection.3.1.2}{Co-Occurence Algorithm}{subsection.3.1}% 15
+\BOOKMARK [2][-]{subsection.3.2}{Ranking}{section.3}% 16
+\BOOKMARK [2][-]{subsection.3.3}{Querying}{section.3}% 17
+\BOOKMARK [1][-]{section.4}{Evaluation}{}% 18
