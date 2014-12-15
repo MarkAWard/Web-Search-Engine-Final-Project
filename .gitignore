@@ -9,3 +9,16 @@ data/index
 data/log
 data/simple
 *.tsv
+*.aux
+
+*.aux
+
+*.dvi
+
+*.log
+
+*.out
+
+*.pdf
+
+*.gz
