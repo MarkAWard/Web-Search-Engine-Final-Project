@@ -55,7 +55,8 @@ function success(position) {
                 var abc = $(this).attr('id');$('#'+i).html("");
             }
             else {
-                var i = $(this).attr('id') + "par";var abc = $(this).attr('id');
+                var i = $(this).attr('id') + "par";
+                var abc = $(this).attr('id');
                 $('#'+i).html("&nbsp;"); 
             }
         }
