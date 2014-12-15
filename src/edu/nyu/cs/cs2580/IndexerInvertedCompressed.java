@@ -534,6 +534,8 @@ public class IndexerInvertedCompressed extends Indexer implements Serializable {
 		this._termCorpusFrequency = loaded._termCorpusFrequency;
 		this._termDocFrequency = loaded._termDocFrequency;
 		this.elias = loaded.elias;
+		this._b_id_to_doc_id = loaded._b_id_to_doc_id;
+		this._similarities = loaded._similarities;
 
 		reader.close();
 		loaded = null;
