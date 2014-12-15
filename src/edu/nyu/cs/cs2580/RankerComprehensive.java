@@ -41,9 +41,10 @@ public class RankerComprehensive extends Ranker {
 			if(!dictionary.containsKey(term))
 				query._tokens.remove(term);
 		}
-		if (query._tokens.size() == 0) 
+		if (query._tokens.size() == 0) {
+			System.out.println("")
 			return NoResults();
-
+		}	
 
 		Document i = _indexer.nextDoc(query, -1);
 		Double pos;
