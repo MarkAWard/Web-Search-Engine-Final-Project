@@ -41,4 +41,9 @@ G.~Browne and J.~Jermey, \emph{Website Indexing: enhancing access to
   information within websites}.\hskip 1em plus 0.5em minus 0.4em\relax Website
   Indexing, 2004.
 
+\bibitem{cos}
+G.~Sidorov, A.~Gelbukh, H.~G{\'o}mez-Adorno, and D.~Pinto, ``Soft similarity
+  and soft cosine measure: Similarity of features in vector space model,''
+  \emph{Computaci{\'o}n y Sistemas}, vol.~18, no.~3, 2014.
+
 \end{thebibliography}

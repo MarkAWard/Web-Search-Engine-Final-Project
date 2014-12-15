@@ -177,11 +177,11 @@ Web Indexing\cite{sindex} is a technique which collects, parses, and stores data
 \paragraph{}Since, the users issue keyword based search queries, we build an index that acts a lookup for words that occur  We read in 56,000 text files containing information about businesses along with their reviews and other meta-data and stored it in the form of an inverted index using byte encoding to compress it. We built an inverted index of words occurring in the review text and score them based on the occurrences in the text. Building an index based on names of businesses wouldn't have helped the engine because there could be businesses with the same names and also, it would allow for free text to be used for querying.
 
 \subsection{Ranking}
-\subsection{Ranking based on All the terms in index}
+\subsection{Ranking based on All the terms in index (All-terms)}
 In this ranking the index consisted of all the terms combined including the category, attributes and reviews. Cosine similarity was applied and raking was generated using this index. Obviously this did not perform well since reviews can be week signals for representing a document.
-\subsubsection{Ranking based on Title, Categories and Reviews}
+\subsubsection{Ranking based on Title, Categories and Reviews (TCR-Distance)}
 Ranking based on the terms contained in the review text is more likely to retrieve relevant businesses. The first thing we do while retrieving is to try and match the queries with the title of the businesses, since retrieval of a business matching the query issued should be fast and thus the title is weighed heavily. We also look for matches in the categories the business belongs to. 
-\subsubsection{Ranking based on number of Reviews and Ratings}
+\subsubsection{Ranking based on number of Reviews and Ratings (RR-Distance)}
 Including number of reviews of a business in our ranking definitely improves the retrieval for a search query. The idea behind including number of reviews is that if a business has more reviews, then certainly a lot of people have used it for its services and this would further enhance the business' credibility. Just because a business has more reviews does not make it a good business. Including a measure of how good the business is for it's services in terms of ratings would retrieve top businesses. Addition of ratings with the number of reviews adds to the improvement and now the retrieval is not just better in terms of whether the query is matched to the business but also the credibility of the business and how good the business is for it's services. Number of reviews can be equivalent to the number of views of a document on a web page.
 
 \subsection{Personalization}
@@ -202,18 +202,55 @@ In our system, we have incorporated group personalization based on the user's lo
 \paragraph{}This method required three MapReduce steps to produce the desired output. The end goal is to obtain for each business a list of the top 10 most frequently co-liked businesses. This will become more clean as we walk through the steps of the algorithm. The first step reads in the list of reviews and for each review the mapper with emit the user id and the business id if the user rated the business 3 stars or greater. The first reducer will then emit all pairs of businesses that a user rated at least as a 3, the value associated with the key tuple is simply the number 1. The next step step of the job uses an identity mapper, a combiner, and then a reducer. The combiner will add up the number of occurrences of a business pair that it receives and will output the same business pair and the count. The reducer must also sum all of the values it receives for each business pair since the combiner is not guaranteed to be run. The reducer will then output a business as a key with a value as a tuple of the other business and the co-occurence count, this is done for both businesses of each pair. The final step of the job is a reducer that for each business will only keep the top 10 business that are also liked by users, i.e. the top 10 highest co-occurence counts. 
 
 \subsection{Ranking}
-\paragraph{}In the previous section, we discussed the different features being used for ranking the businesses being retrieved by the engine. Intuitively one would think about using a linear ranking that generates scores based on different features, weighing them and add the scores linearly. But this doesn't improve the retrieval as will be discussed in the next section. Taking a product of the scores based on different features improves the retrieval to a certain extent. 
+\subsection{Search}
+In the previous section, we discussed the different features being used for ranking the businesses being retrieved by the engine. We tried all the three above mentioned ranking technique and the best results where found for TCR-Score which used the title, category and reviews along with distance as a feature for ranking.
 
-The reason ranking is done multiplicatively is because if score from one of the features is high while the score from another is low, the overall score does not increase to a great extent. This way of aggressively ranking the businesses, results in retrieval of businesses that truly satisfy almost all the requirements. 
-\begin{center}
-total score = \underline{(cosine score)x(score number of reviews)x(score ratings)}
-                             \\  distance
+We divided our signals into tiers as show in Table 5.
+\begin{table}[h!]
+\centering
+\begin{tabular}{|l|l|l|}
+\hline
+\textbf{Tier \#} & \textbf{Fields} & \textbf{Information} \\ \hline
+1 & Title & Low quantity High quality \\ \hline
+2 & Category and attributes & Medium quantity Good quality \\ \hline
+3 & Tips and reviews & High quantity Low quality \\ \hline
 
-\end{center}
+\end{tabular}
+\caption{Tiered Signals}
+\end{table}
+
+We generate ranking signal for each tier and then combine the results in a weighted manner. For tier 3 features we used cosine similarity \cite{cos}.
+
+To measure the similarity between two vectors of an inner product space, we measures the cosine of the angle between them. Vectors have same orientation have high Cosine similarity of 1, whereas the orthogonal vectors have a similarity of 0. . Here, Each term is notionally assigned a different dimension and a document is characterized by a vector where the value of each dimension corresponds to the number of times that term appears in the document. 
+
+\begin{equation}
+\cos(\theta) = {A \cdot B \over \|A\| \|B\|} = \frac{ \sum\limits_{i=1}^{n}{A_i \times B_i} }{ \sqrt{\sum\limits_{i=1}^{n}{(A_i)^2}} \times \sqrt{\sum\limits_{i=1}^{n}{(B_i)^2}} }
+\label{eq:}
+\end{equation}
+
+The tier 2 features are scored using direct match between the category and attribute signals and the query tokens. Similarly for the tier 1 features the query terms and title terms are matched and normalized by title term number.
+
+This give us three signals and then combine them using the below equation.
+
+\begin{equation}
+Total_{Score} = 5.0 \times tire_{1} + 2.5 \times tire_{2} + 1.0 \times tire_{3}
+\end{equation}
+
+Once these scored are combined we then pick top \textit{k} ( 100 right now) and re-rank these results according to the user's required location ( specific or current ). In the re-rank function we use the Haversine formula \cite{hav} to compute the distance between the use location and the business. Re-ranking is done by dividing the score by the distance.
+\begin{equation}
+Reranked_{score} = \frac{Total_{score}}{HaversineDistance}
+\end{equation}
+Documents ranking in top 20 are retried and shown at the front end.
+
+\subsection{Recommendation}
+In this case documents with perfect tier 1 score are considered and rest are assigned a score of zero. Once we have these documents we then use the other index, which is populated using the pre-computed similarities as mentioned in above section. We then return back the top similar business to the front end
+
+
 \subsection{Querying}
 \paragraph{}One can search businesses directly by simply querying the name of the businesses. The engine returns the corresponding business the user was looking for along with similar businesses based on the similarity computed from term matches and similar businesses looked by other users. 
 \paragraph{}The other way one could issue queries would be to find businesses that meet certain requirements like \textit{Mexican Restaurants} or \textit{Coffee houses}. The engine retrieves businesses that match the term not only in the Categories and the titles, but also in the review text. The resulting retrieval is ranked based on Cosine similarity, location, number of reviews and ratings.
-\paragraph{}Geographic location based retrieval is the other part of the project, we focused on. The engine not only retrieves businesses that match the query but also makes sure the businesses are situated in the region from where the query is issued. 
+\paragraph{}Geographic location based retrieval is the other part of the project, we focused on. The engine not only retrieves businesses that match the query but also makes sure the businesses are situated in the region from where the query is issued.
+ 
 \section{Evaluation}
 \paragraph{}Since we built a search engine that retrieves businesses matched by the query being issued
 
