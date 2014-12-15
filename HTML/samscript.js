@@ -253,10 +253,8 @@ function success(position) {
 
         valids=true;
 
-        //l1= 36.114588;
-        //l2 = -115.161922;
         var location = $.trim($('input[name=loc]').val());
-        console.log(location);
+        //console.log(location);
         switch (location) {
             case "Morningside Heights, NY":
                 l1= 40.8089564;
@@ -366,6 +364,7 @@ function success(position) {
                 'ranker' : 'comprehensive',
                 'latitude': l1,
                 'longitude':l2,
+                'findsim': "yes",
             };
             $.ajax({
                 type : 'GET', 
