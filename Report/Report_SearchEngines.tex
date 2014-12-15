@@ -2,6 +2,7 @@
 \usepackage{nips14submit_e,times}
 \usepackage{hyperref}
 \usepackage{url}
+\usepackage{graphicx}
 %\documentstyle[nips14submit_09,times,art10]{article} % For LaTeX 2.09
 
 
@@ -247,14 +248,45 @@ In this case documents with perfect tier 1 score are considered and rest are ass
 
 
 \subsection{Querying}
-\paragraph{}One can search businesses directly by simply querying the name of the businesses. The engine returns the corresponding business the user was looking for along with similar businesses based on the similarity computed from term matches and similar businesses looked by other users. 
-\paragraph{}The other way one could issue queries would be to find businesses that meet certain requirements like \textit{Mexican Restaurants} or \textit{Coffee houses}. The engine retrieves businesses that match the term not only in the Categories and the titles, but also in the review text. The resulting retrieval is ranked based on Cosine similarity, location, number of reviews and ratings.
-\paragraph{}Geographic location based retrieval is the other part of the project, we focused on. The engine not only retrieves businesses that match the query but also makes sure the businesses are situated in the region from where the query is issued.
+\paragraph{}There are multiple ways to interact with our search engine. The first mode is a standard keyword based search; to use this method one selects the Business option to the left of the search box to the search for businesses. One could issue queries to find businesses that meet certain requirements like \textit{Mexican Restaurants} or \textit{Coffee houses}. The engine retrieves businesses that match the term not only in the categories and the titles, but also in the review text. Once the relevant businesses are found, the search engine uses your current location, or the location provided in the query box, to push relevant businesses that are also geographically nearby towards the top of the search results. The search engine also provides auto-complete for a subset of business names that are included in the corpus. The search box that takes a location as input also has auto-complete for locations that contain a multitude of businesses. 
+
+\paragraph{}The next mode of querying on the search engine is to use the Similar option. In this mode, one searches for a business name directly, we suggest making use of the auto-complete to improve the chances of finding an exact match. The engine will then return the corresponding business the user was looking for along with a list of similar businesses based on the cosine similarity computed between the review text of the businesses. The similar business that are returned will also be in close proximity to the business that was originally searched for.
+
+\paragraph{}The final querying mode we call Also Liked. In this mode, one will again search for a specific business by name and the results will be the business that was searched for along with a list of businesses that were liked by users who also liked the business that was searched for. Again, the businesses that are returned will all be close to each other. The input location to the search will not affect the results returned but it can be used to automatically adjust the map.
  
 \section{Evaluation}
-\paragraph{}Since we built a search engine that retrieves businesses matched by the query being issued
+Figures 1-4 represent the Evaluation 
+
+\begin{figure}[h!]
+\begin{minipage}{.5\linewidth}
+\centering
+\includegraphics[scale=0.6]{Acc.png}
+\caption{Accuracy}
+\end{minipage}
+\begin{minipage}{.5\linewidth}
+\includegraphics[scale=0.6]{NDCG.png}
+\caption{NDCG at 5}
+\end{minipage}
+\end{figure}
 
 
+
+\begin{figure}[h!]
+\begin{minipage}{.5\linewidth}
+\centering
+\includegraphics[scale=0.6]{Avg.png}
+\caption{Average Accuracy at 5}
+\end{minipage}
+\begin{minipage}{.5\linewidth}
+\centering
+\includegraphics[scale=0.6]{AvgNDCG.png}
+\caption{Average NDCG}
+\end{minipage}
+\end{figure} 
+
+\section{Result}
+The project dealt with businesses provided in the Yelp data. For efficient web indexing, business, reviews, user and tip parts of the data were used. We made an effort to provide search results to a user that are not only pertinent to the query but are also accessible to the user in terms of the location.
+As part of the future work, we would scale up the system to incorporate bigger dataset and perform semantic analysis of the query.
 
 \bibliographystyle{IEEEtran}      
 \bibliography{sample}
