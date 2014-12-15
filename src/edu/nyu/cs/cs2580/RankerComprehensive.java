@@ -109,7 +109,10 @@ public class RankerComprehensive extends Ranker {
 		if(findsim)
 		{
 			System.out.println("Here");
-			for(int k=0;k<all.size();k++)
+			
+			int all_size=all.size();
+			
+			for(int k=0;k<all_size;k++)
 			{
 				System.out.println("inside for");
 				Vector<Tuple<Double, Integer>> sim_docs = _indexer.get_similardoc(all.get(k).get_doc()._docid);
