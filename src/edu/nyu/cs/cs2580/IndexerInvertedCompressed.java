@@ -880,7 +880,10 @@ public class IndexerInvertedCompressed extends Indexer implements Serializable {
 	
 	public Vector<Tuple<Double, Integer>> get_similardoc(int docid)
 	{
+		if(_similarities.containsKey(docid))
 		return _similarities.get(docid);
+		else
+			return null;
 	}
 
 }

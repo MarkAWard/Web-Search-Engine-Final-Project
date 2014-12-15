@@ -112,13 +112,9 @@ public class RankerComprehensive extends Ranker {
 					d = _indexer.getDoc(sim_docs.get(l).getSecond());
 					all.add(scoreDocument(query, d, findsim));
 				}
-				
-				
+								
 			}
-			
-			
-			
-			
+	
 		}
 		
 		Vector<ScoredDocument> results = new Vector<ScoredDocument>();
@@ -138,7 +134,8 @@ public class RankerComprehensive extends Ranker {
 			sdoc.set_title(title_score);
 			return sdoc;
 		}
-		else
+
+		else if(!findsim)
 		{
 		double cosine_score = runquery_cosine(query, document);
 		double category_score = runquery_categories(query, document);
@@ -153,6 +150,8 @@ public class RankerComprehensive extends Ranker {
 
 		return sdoc;
 		}
+		
+		return new ScoredDocument(document, 0.0);
 	}
 
 	private double runquery_title(Query query, Document doc) {
