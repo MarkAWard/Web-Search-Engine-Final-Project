@@ -2,16 +2,10 @@ package edu.nyu.cs.cs2580;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.PriorityQueue;
-import java.util.Queue;
 import java.util.Vector;
-import java.util.Comparator;
-
 import edu.nyu.cs.cs2580.QueryHandler.CgiArguments;
 import edu.nyu.cs.cs2580.SearchEngine.Options;
-import edu.nyu.cs.cs2580.IndexerInvertedCompressed.Tuple;
 
 /**
  * @CS2580: Implement this class for HW3 based on your {@code RankerFavorite}
@@ -32,7 +26,8 @@ public class RankerComprehensive extends Ranker {
 	public Vector<ScoredDocument> runQuery(Query query, int numResults, double latitude, double longitude) {
 
 		Vector<ScoredDocument> all = new Vector<ScoredDocument>();
-
+		
+		
 
 		QueryPhrase qp=new QueryPhrase(query._raw);
 		qp.processQuery();

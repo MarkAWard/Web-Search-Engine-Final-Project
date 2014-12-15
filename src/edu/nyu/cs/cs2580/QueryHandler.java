@@ -203,8 +203,7 @@ class QueryHandler implements HttpHandler {
 			processedQuery.processQuery();
 
 			// Ranking.
-			Vector<ScoredDocument> scoredDocs = ranker.runQuery(processedQuery,
-					cgiArgs._numResults, cgiArgs._latitude, cgiArgs._longitude);
+			Vector<ScoredDocument> scoredDocs = ranker.runQuery(processedQuery, cgiArgs._numResults, cgiArgs._latitude, cgiArgs._longitude);
 			StringBuffer response = new StringBuffer();
 			switch (cgiArgs._outputFormat) {
 			case TEXT:
