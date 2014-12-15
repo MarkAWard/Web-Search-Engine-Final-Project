@@ -260,8 +260,8 @@ function success(position) {
                 l2= -73.9624327;
                 break;
             case "Phoenix, AZ":
-                l1= 33.4483771;
-                l2= -73.9625;
+                l1= 33.448377;
+                l2= -112.074037;
                 break;
             case "Las Vegas, NV":
                 l1=36.114646;
