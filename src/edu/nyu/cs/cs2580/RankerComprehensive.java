@@ -51,11 +51,18 @@ public class RankerComprehensive extends Ranker {
 				}
 
 				if (j == qp.phrase.size())
-					all.add(scoreDocument(query, i,findsim));
+				{
+					ScoredDocument s_doc =scoreDocument(query, i,findsim);
+					if(s_doc.get_score()!=0.0)
+					all.add(s_doc);
+					
+				}
 			} else {
 				// System.out.println( " Docid: " + i._docid + " Docname: " +
 				// i.getTitle() );
-				all.add(scoreDocument(query, i,findsim));
+				ScoredDocument s_doc =scoreDocument(query, i,findsim);
+				if(s_doc.get_score()!=0.0)
+				all.add(s_doc);
 			}
 
 			i = _indexer.nextDoc(query, i._docid);
@@ -101,24 +108,33 @@ public class RankerComprehensive extends Ranker {
 
 		if(findsim)
 		{
+			System.out.println("Here");
 			
-			for(int k=0;k<all.size();k++)
+			int all_size=all.size();
+			
+			for(int k=0;k<all_size;k++)
 			{
+				System.out.println("inside for");
 				Vector<Tuple<Double, Integer>> sim_docs = _indexer.get_similardoc(all.get(k).get_doc()._docid);
 				
-				for(int l=0;l<5;l++)
+				if(sim_docs!=null)
 				{
-					Document d;
-					d = _indexer.getDoc(sim_docs.get(l).getSecond());
-					all.add(scoreDocument(query, d, findsim));
+					for(int l=0;l<sim_docs.size()&&l<5;l++)
+					{
+						Document d;
+						d = _indexer.getDoc(sim_docs.get(l).getSecond());
+						all.add(scoreDocument(query, d, findsim));
+						System.out.println("inside inner for");
+					}
 				}
 				
-				
+				else
+				{
+					all.remove(k);
+				}
+								
 			}
-			
-			
-			
-			
+	
 		}
 		
 		Vector<ScoredDocument> results = new Vector<ScoredDocument>();
@@ -138,7 +154,9 @@ public class RankerComprehensive extends Ranker {
 			sdoc.set_title(title_score);
 			return sdoc;
 		}
-		
+
+		else if(!findsim)
+		{
 		double cosine_score = runquery_cosine(query, document);
 		double category_score = runquery_categories(query, document);
 
@@ -151,6 +169,9 @@ public class RankerComprehensive extends Ranker {
 		sdoc.set_category(category_score);
 
 		return sdoc;
+		}
+		
+		return new ScoredDocument(document, 0.0);
 	}
 
 	private double runquery_title(Query query, Document doc) {
