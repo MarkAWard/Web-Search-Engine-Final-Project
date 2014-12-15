@@ -2,14 +2,16 @@
 \BOOKMARK [1][-]{section.2}{Design and Architecture}{}% 2
 \BOOKMARK [2][-]{subsection.2.1}{Dataset}{section.2}% 3
 \BOOKMARK [2][-]{subsection.2.2}{Document Processing}{section.2}% 4
-\BOOKMARK [2][-]{subsection.2.3}{Indexing}{section.2}% 5
-\BOOKMARK [2][-]{subsection.2.4}{Ranking}{section.2}% 6
-\BOOKMARK [3][-]{subsubsection.2.4.1}{Ranking based on Title, Categories and Reviews}{subsection.2.4}% 7
-\BOOKMARK [3][-]{subsubsection.2.4.2}{Ranking based on number of Reviews and Ratings}{subsection.2.4}% 8
-\BOOKMARK [1][-]{section.3}{Implementation}{}% 9
-\BOOKMARK [2][-]{subsection.3.1}{Data}{section.3}% 10
-\BOOKMARK [2][-]{subsection.3.2}{Recommendation using Map-Reduce framework}{section.3}% 11
-\BOOKMARK [3][-]{subsubsection.3.2.1}{Algorithm}{subsection.3.2}% 12
-\BOOKMARK [2][-]{subsection.3.3}{Ranking}{section.3}% 13
-\BOOKMARK [2][-]{subsection.3.4}{Querying}{section.3}% 14
-\BOOKMARK [1][-]{section.4}{Evaluation}{}% 15
+\BOOKMARK [2][-]{subsection.2.3}{Pre-Computing Business Similarity}{section.2}% 5
+\BOOKMARK [2][-]{subsection.2.4}{Indexing}{section.2}% 6
+\BOOKMARK [2][-]{subsection.2.5}{Ranking}{section.2}% 7
+\BOOKMARK [2][-]{subsection.2.6}{Ranking based on All the terms in index}{section.2}% 8
+\BOOKMARK [3][-]{subsubsection.2.6.1}{Ranking based on Title, Categories and Reviews}{subsection.2.6}% 9
+\BOOKMARK [3][-]{subsubsection.2.6.2}{Ranking based on number of Reviews and Ratings}{subsection.2.6}% 10
+\BOOKMARK [2][-]{subsection.2.7}{Personalization}{section.2}% 11
+\BOOKMARK [1][-]{section.3}{Implementation}{}% 12
+\BOOKMARK [2][-]{subsection.3.1}{Recommendation using Map-Reduce framework}{section.3}% 13
+\BOOKMARK [3][-]{subsubsection.3.1.1}{Algorithm}{subsection.3.1}% 14
+\BOOKMARK [2][-]{subsection.3.2}{Ranking}{section.3}% 15
+\BOOKMARK [2][-]{subsection.3.3}{Querying}{section.3}% 16
+\BOOKMARK [1][-]{section.4}{Evaluation}{}% 17

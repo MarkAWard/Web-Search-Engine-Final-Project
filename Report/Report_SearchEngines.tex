@@ -54,7 +54,7 @@ In this report we talk about the design and implementation of the system. We bri
 Searching for businesses online has become easier now-a-days. Search engines such as Yelp \cite{yel} provide users with information about businesses and also opinions of people who have used services provided by the business. Ratings and reviews go a long way in determining the success of a business and people invest considerable amount of time providing their experiences and suggestions as to how could one leverage the business' services to get a positive experience. Our main aim is to make use of this user-generated information to further enhance the information retrieved by our search engine. 
 
 
-We leverage information about businesses and users to build a search engine that not only searches businesses queried by our users but also recommends similar businesses in and around the vicinity of their searches. This similarity is derived from the reviews provided for each business. We used the Map-Reduce framework to get the user-based and the content based similarities. The subsequent sections provide detailed discussions on how we incorporated recommendations into our search engines. The search engine also performs location based personalization such that the retrieved businesses pertain to the region our search engine is being queried from.
+We leverage information about businesses and users to build a search engine that not only searches businesses queried by our users but also recommends similar businesses in and around the vicinity of their searches. This similarity is derived from the reviews provided for each business. We used the Map-Reduce\cite{smap} framework to get the user-based and the content based similarities. The subsequent sections provide detailed discussions on how we incorporated recommendations into our search engines. The search engine also performs location based personalization such that the retrieved businesses pertain to the region our search engine is being queried from.
 We have built our search engine such that one could not only use it for searching for a specific business but also use free text to look for businesses that provide services which match the user's queries. For example, one could look for places that serve pizza by querying \textit{pizza} on our search engine. 
 
 The report is structured as follows. Section 2 talks about the basic architecture of the system and the design considerations. Section 3 discuss the implementation details. The results and evaluation of the system are provided in Section 4 and Section 5 concludes the report.
@@ -80,31 +80,84 @@ The datasets are divided into majorly four parts
 \item Tips
 \item User
 \end{itemize}
-Each part is a separate JSON file. The fields of each part as follows.
+Each part of the dataset is provided as a separate JSON file. We merged the information provided in the 4 json files into one text file for each business and incorporated data for over 55,642 Businesses, 1.9 million review and 403,210 tips. Table 1-4 summarizes the important fields pertaining to each dataset-part which we have used for creating the index.
 
-\begin{table}
-\begin{tabular}{}
-
+\begin{table}[h!]%
+\begin{minipage}{.5\linewidth}
+\centering
+\begin{tabular}{|l|}
+\hline
+\textbf{Business} \\\hline
+business id\\\hline
+name\\\hline
+neighborhoods\\\hline
+full address\\\hline
+city\\\hline
+state\\\hline
+latitude\\\hline
+longitude\\\hline
+stars\\\hline
+review count\\\hline
+photo url\\\hline
+categories\\\hline
+url\\\hline
 \end{tabular}
-
-
+\caption{Important Attributes for Business }
+\end{minipage}
+\label{}
+\begin{minipage}{.5\linewidth}
+\centering
+\begin{tabular}{|l|}
+\hline
+\textbf{Review} \\\hline
+business id\\\hline
+user id\\\hline
+stars\\\hline
+text\\\hline
+date\\\hline
+votes\\\hline
+\end{tabular}
+\caption{Important Attributes for Review }
+\end{minipage}
+\label{}
 \end{table}
 
 
-We used Yelp's academic dataset to build our search engine. The dataset provides business and review information for nearly 56,000 businesses belonging to Canada UK and the United States. There were a total of 1.9 million reviews and around 100,000 tips. The information was provided in 3 different json files which were merged and written into one text file for each business. The following table shows ...........:
-\begin{center}
-    \begin{tabular}{| l | r |}
-    \hline
-    1 & Business Id \\ \hline
-    2 & Name  \\  \hline
-    3 & Latitude and Longitude \\ \hline 
-	4 & Ratings \\ \hline    
-    5 & Address \\ \hline
-    6 & Categories \\ \hline
-    7 & Reviews \\ \hline
-    8 & Tips \\ \hline
+\begin{table}[h!]
+\begin{minipage}{.5\linewidth}
+\centering
+\begin{tabular}{|l|}
+\hline
+\textbf{Tips} \\\hline
+text\\\hline
+business id\\\hline
+user id\\\hline
+date\\\hline
+likes\\\hline
 \end{tabular}
-\end{center}
+\caption{Important Attributes for Tips }
+\label{}
+\end{minipage}
+\begin{minipage}{.5\linewidth}
+\centering
+\begin{tabular}{|l|}
+\hline
+\textbf{Users} \\\hline
+user id\\\hline
+name\\\hline
+review count\\\hline
+average stars\\\hline
+votes\\\hline
+review\_count\\ \hline
+\end{tabular}
+\caption{Important Attributes for User }
+\label{}
+\end{minipage}
+\end{table}
+
+
+
+
  
 \subsection{Document Processing}
 The business information for all 56,000 businesses were stored in different text files for all businesses. A business document consisted was based off a format that was followed for all businesses. Meta-data such as business id, business name, address, ratings, latitude and longitude were stored, one per line. This was followed by categories and attributes of the businesses which form the main part of the document.
@@ -113,19 +166,28 @@ Every business has tags associated with it which provides vital information abou
 Apart from this, other attributes that provide additional information about the business such as Wheelchair access or Accepts credit cards or Wi-Fi enabled or Good for Kids and Family, are also included as categories. These tags help the user to get an idea about the business that they would like to know that businesses generally don't provide.
 This was followed by tips and then reviews. Since the number of tips and reviews would differ for each document. The total number of tips and reviews are also added as it would not only be useful for ease of processing, but would also be used during ranking.  
 
-While reading in the documents, some amount of pre-processing needed to be done, namely removal of words with unusually long length with repetitions of vowels. Words such as \textit{good} were written with more vowels like \textit{goooood} to portray the extent to which the service was good. Many such words with repetition of alphabets were trimmed down to not more than two. This processing was only done in the reviews text and the name and other attributes were unchanged. Stemming of words is also done to remove frequently occurring words or words that do not actually contribute to the ranking. Ease of matching of query terms with the document terms was also one of the reasons for stemming the words in the documents.
+While reading in the documents, some amount of pre-processing needed to be done, namely removal of words with unusually long length with repetitions of vowels. Words such as \textit{good} were written with more vowels like \textit{goooood} to portray the extent to which the service was good. Many such words with repetition of alphabets were trimmed down to not more than two. This processing was only done in the reviews text and the name and other attributes were unchanged. Stemming\cite{sstem} of words is also done to  reduce inflected or derived words to their word stem. Frequently occurring stop words or words that do not actually contribute to the ranking are eliminated. Ease of matching of query terms with the document terms was also one of the reasons for stemming the words in the documents.
+
+\subsection{Pre-Computing Business Similarity}
 
 
 \subsection{Indexing}
+Web Indexing\cite{sindex} is a technique which collects, parses, and stores data for efficient and fast information retrieval. The motivation  is to optimize speed and performance for finding relevant documents given a search query. In the absence of an index, the system will have to scan every document in the corpus and that would consume considerable time and computing power. The trade off  is the additional computer storage required for storing the index and the increased time required for updates. 
+
 \paragraph{}Since, the users issue keyword based search queries, we build an index that acts a lookup for words that occur  We read in 56,000 text files containing information about businesses along with their reviews and other meta-data and stored it in the form of an inverted index using byte encoding to compress it. We built an inverted index of words occurring in the review text and score them based on the occurrences in the text. Building an index based on names of businesses wouldn't have helped the engine because there could be businesses with the same names and also, it would allow for free text to be used for querying.
 
 \subsection{Ranking}
+\subsection{Ranking based on All the terms in index}
+In this ranking the index consisted of all the terms combined including the category, attributes and reviews. Cosine similarity was applied and raking was generated using this index. Obviously this did not perform well since reviews can be week signals for representing a document.
 \subsubsection{Ranking based on Title, Categories and Reviews}
-\paragraph{}Ranking based on the terms contained in the review text is more likely to retrieve relevant businesses. The first thing we do while retrieving is to try and match the queries with the title of the businesses, since retrieval of a business matching the query issued should be fast and thus the title is weighed heavily. We also look for matches in the categories the business belongs to. 
+Ranking based on the terms contained in the review text is more likely to retrieve relevant businesses. The first thing we do while retrieving is to try and match the queries with the title of the businesses, since retrieval of a business matching the query issued should be fast and thus the title is weighed heavily. We also look for matches in the categories the business belongs to. 
 \subsubsection{Ranking based on number of Reviews and Ratings}
-\paragraph{}Including number of reviews of a business in our ranking definitely improves the retrieval for a search query. The idea behind including number of reviews is that if a business has more reviews, then certainly a lot of people have used it for its services and this would further enhance the business' credibility. Just because a business has more reviews does not make it a good business. Including a measure of how good the business is for it's services in terms of ratings would retrieve top businesses. Addition of ratings with the number of reviews adds to the improvement and now the retrieval is not just better in terms of whether the query is matched to the business but also the credibility of the business and how good the business is for it's services. Number of reviews can be equivalent to the number of views of a document on a web page.    
+Including number of reviews of a business in our ranking definitely improves the retrieval for a search query. The idea behind including number of reviews is that if a business has more reviews, then certainly a lot of people have used it for its services and this would further enhance the business' credibility. Just because a business has more reviews does not make it a good business. Including a measure of how good the business is for it's services in terms of ratings would retrieve top businesses. Addition of ratings with the number of reviews adds to the improvement and now the retrieval is not just better in terms of whether the query is matched to the business but also the credibility of the business and how good the business is for it's services. Number of reviews can be equivalent to the number of views of a document on a web page.
+
+\subsection{Personalization}
+In our system, we have incorporated group personalization based on the user's location. The system takes into consideration the location of the user i.e. latitude and longitude, while displaying the search results. We assume that places/resources that are in the vicinity of a person are more relevant to him than the businesses that are located at a far off area. Additionally a user might be interested in getting information for businesses that are located in a different region. For that purpose, the user has an option to select the location that he is interested in. Hence, the results that are displayed to a user are both pertinent to the user's query and location interest.    
 \section{Implementation}
-\subsection{Data}
+
 
 
 
@@ -144,31 +206,11 @@ total score = \underline{(cosine score)x(score number of reviews)x(score ratings
 \subsection{Querying}
 \paragraph{}One can search businesses directly by simply querying the name of the businesses. The engine returns the corresponding business the user was looking for along with similar businesses based on the similarity computed from term matches and similar businesses looked by other users. 
 \paragraph{}The other way one could issue queries would be to find businesses that meet certain requirements like \textit{Mexican Restaurants} or \textit{Coffee houses}. The engine retrieves businesses that match the term not only in the Categories and the titles, but also in the review text. The resulting retrieval is ranked based on Cosine similarity, location, number of reviews and ratings.
-\paragraph{}Geographic location based retrieval is the other part of the project, we focussed on. The engine not only retrieves businesses that match the query but also makes sure the businesses are situated in the region from where the query is issued. 
+\paragraph{}Geographic location based retrieval is the other part of the project, we focused on. The engine not only retrieves businesses that match the query but also makes sure the businesses are situated in the region from where the query is issued. 
 \section{Evaluation}
 \paragraph{}Since we built a search engine that retrieves businesses matched by the query being issued
 
-\begin{table}[t]
-\caption{Data Description}
-\label{sample-table}
-\begin{center}
-\begin{tabular}{ll}
-\multicolumn{1}{c}{\bf PART}  &\multicolumn{1}{c}{\bf DESCRIPTION}
-\\ \hline \\
-Dendrite         &Input terminal \\
-Axon             &Output terminal \\
-Soma             &Cell body (contains cell nucleus) \\
-\end{tabular}
-\end{center}
-\end{table}
 
-
-\section*{Acknowledgments}
-
-Use unnumbered third level headings for the acknowledgments. All
-acknowledgments go at the end of the paper. Do not include 
-acknowledgments in the anonymized submission, only in the 
-final paper. 
 
 \bibliographystyle{IEEEtran}      
 \bibliography{sample}
