@@ -2,7 +2,7 @@ JCC = javac
 JVM = java
 JFLAGS = -classpath "library/*"
 INDEXFLAGS = -classpath "src:library/*" 
-RUNFLAGS = -classpath "src:library/*" -Xmx3000m  -Xms1000m
+RUNFLAGS = -classpath "src:library/*" -Xmx3000m  -Xms2500m
 
 .java.class:
 	$(JCC) $(JFLAGS) $*.java
