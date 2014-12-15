@@ -35,7 +35,7 @@ class QueryHandler implements HttpHandler {
 		private int _numResults = 20;
 		private int _numTerms = 10;
 		private int _numDocs = 10;
-		private Boolean _findsim = true;
+		private Boolean _findsim = false;
 		//Madison Wisconsin
 		//private double _latitude = 43.0667;
                 //private double _longitude = 89.4000; 
