@@ -8,6 +8,7 @@ import java.util.Vector;
 
 
 
+
 import edu.nyu.cs.cs2580.QueryHandler.CgiArguments;
 import edu.nyu.cs.cs2580.SearchEngine.Options;
 
@@ -25,7 +26,7 @@ public class RankerConjunctive extends Ranker {
   }
 
   @Override
-  public Vector<ScoredDocument> runQuery(Query query, int numResults, double latitude, double longitude) {
+  public Vector<ScoredDocument> runQuery(Query query, int numResults, double latitude, double longitude,Boolean _nearme) {
   
 	  Queue<ScoredDocument> rankQueue = new PriorityQueue<ScoredDocument>();
   

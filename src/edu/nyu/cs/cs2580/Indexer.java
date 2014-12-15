@@ -3,7 +3,9 @@ package edu.nyu.cs.cs2580;
 import com.google.common.collect.HashBiMap;
 
 import java.io.IOException;
+import java.util.Vector;
 
+import edu.nyu.cs.cs2580.IndexerInvertedCompressed.Tuple;
 import edu.nyu.cs.cs2580.SearchEngine.Options;
 
 /**
@@ -150,5 +152,7 @@ public abstract class Indexer {
   }
 
 public abstract HashBiMap<String, Integer> getDict();
+
+public abstract Vector<Tuple<Double, Integer>> get_similardoc(int docid);
 
 }

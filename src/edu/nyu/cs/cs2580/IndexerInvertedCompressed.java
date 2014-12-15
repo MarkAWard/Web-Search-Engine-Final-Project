@@ -1,8 +1,10 @@
 package edu.nyu.cs.cs2580;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -17,14 +19,20 @@ import java.util.Set;
 import java.util.Vector;
 import java.util.Comparator;
 import java.util.ArrayList;
+
 import com.google.common.collect.HashBiMap;
+
 import edu.nyu.cs.cs2580.SearchEngine.Options;
 
 public class IndexerInvertedCompressed extends Indexer implements Serializable {
 
 	private final Double log_2 = 1 / Math.log(2.0);
 
-	public static class Tuple<T, R> {
+	public static class Tuple<T, R> implements Serializable {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 9067856084405743391L;
 		private T first;
 		private R second;
 
@@ -43,9 +51,12 @@ public class IndexerInvertedCompressed extends Indexer implements Serializable {
 
 	}
 
+	Tuple<String, Integer> t;
 	private static final long serialVersionUID = 1626440145434710491L;
 
 	private HashBiMap<String, Integer> _dictionary = HashBiMap.create();
+	public HashMap<String, Integer> _b_id_to_doc_id = new HashMap<String,Integer>();
+	public HashMap<Integer, Vector<Tuple<Double, Integer>>> _similarities = new HashMap<Integer, Vector<Tuple<Double, Integer>>>();
 	private Map<String, Vector<Integer>> _decoded = new HashMap<String, Vector<Integer>>();
 	private HashMap<Integer, Integer> elias = new HashMap<Integer, Integer>();
 	private HashMap<Integer, BitSet> _postings = new HashMap<Integer, BitSet>();
@@ -71,86 +82,139 @@ public class IndexerInvertedCompressed extends Indexer implements Serializable {
 	@Override
 	public void constructIndex() throws IOException {
 
-		String corpusDir = _options._corpusPrefix;
-		System.out.println("Constructing index documents in: " + corpusDir);
+		
+		 String corpusDir = _options._corpusPrefix;
+		 System.out.println("Constructing index documents in: " + corpusDir);
+		
+		 File Dir = new File(corpusDir);
+		 for (final File fileEntry : Dir.listFiles()) {
+		 if (!fileEntry.isDirectory()) {
+		
+		 // dont read hidden files
+		 if (fileEntry.isHidden())
+		 continue;
+		
+		 System.out.println(fileEntry);
+		 Scanner file_Scan = new Scanner(fileEntry).useDelimiter("\\Z");
+		 processDocument(file_Scan.next());
+		 _term_position.clear();
+		 file_Scan.close();
+		
+		 }
+		 }
+		 
+		 String similarityDir = "data/similarities";
+			Dir = new File(similarityDir);
 
-		final File Dir = new File(corpusDir);
-		for (final File fileEntry : Dir.listFiles()) {
-			if (!fileEntry.isDirectory()) {
+			Integer business_id;
+			Integer prev_business_id = null;
 
-				// dont read hidden files
-				if (fileEntry.isHidden())
-					continue;
+			for (final File fileEntry : Dir.listFiles()) {
+				if (!fileEntry.isDirectory()) {
 
-				System.out.println(fileEntry);
-				Scanner file_Scan = new Scanner(fileEntry).useDelimiter("\\Z");
-				processDocument(file_Scan.next());
-				_term_position.clear();
-				file_Scan.close();
+					if (fileEntry.isHidden())
+						continue;
+
+					if (fileEntry.toString().contains("top_similar")) {
+						System.out.println("Load similarities from: " + fileEntry);
+
+						BufferedReader buf = new BufferedReader(new FileReader(
+								fileEntry));
+
+						Vector<Tuple<Double, Integer>> sim = new Vector<Tuple<Double, Integer>>();
+						String line;
+						int ct = 0;
+						while ((line = buf.readLine()) != null) {
+							Scanner s = new Scanner(line).useDelimiter(",");
+							business_id = _b_id_to_doc_id.get(s.next());
+							if (ct == 0) {
+								prev_business_id = business_id;
+								ct++;
+							}
+							if (business_id.equals(prev_business_id)) {
+								sim.add(new Tuple<Double, Integer>(s.nextDouble(),_b_id_to_doc_id.get(s.next())));
+							} else {
+								Vector<Tuple<Double, Integer>> put = new Vector<Tuple<Double, Integer>>();
+								put.addAll(sim);
+								_similarities.put(prev_business_id, put);
+								sim.clear();
+								sim.add(new Tuple<Double, Integer>(s.nextDouble(), _b_id_to_doc_id.get(s.next())));
+							}
+
+							prev_business_id = business_id;
+
+							s.close();
+						}
+
+					}
+
+				}
 
 			}
-		}
 
-		DocReader = null;
-
-		/*
+		
+		
+		
+		 DocReader = null;
+		
+		 /*
 		 * String corpusFile = _options._corpusPrefix + "/corpus.tsv";
 		 * System.out.println("Construct index from: " + corpusFile);
-		 * 
+		 *
 		 * int n_doc = 0; BufferedReader reader = new BufferedReader(new
 		 * FileReader(corpusFile)); try { String line = null; while ((line =
 		 * reader.readLine()) != null) { System.out.println("Document"+n_doc);
 		 * processDocument(line); _term_position.clear();
-		 * 
+		 *
 		 * n_doc++; } } finally { reader.close(); }
 		 */
-		System.out.println("Indexed " + Integer.toString(_numDocs)
-				+ " docs with " + Long.toString(_totalTermFrequency)
-				+ " terms.");
-
-		String indexFile = _options._indexPrefix + "/corpus.idx";
-		System.out.println("Store index to: " + indexFile);
-		ObjectOutputStream writer = new ObjectOutputStream(
-				new FileOutputStream(indexFile));
-
-		// temporary vectors
-		Vector<Integer> list = new Vector<Integer>();
-		Vector<Integer> skip = new Vector<Integer>();
-		Vector<Integer> posting = new Vector<Integer>();
-
-		BitSet bits = new BitSet();
-
-		System.out.println(_dictionary.size());
-
-		for (int i : _dictionary.values()) {
-			// get the term position list and skip pointer
-			list = _term_list.get(i);
-			skip = _skip_pointer.get(i);
-
-			// create final posting for term
-			posting = update_skip(skip, skip.size());
-			posting.addAll(list);
-
-			bits = elias_encode(posting, i);
-
-			_postings.put(i, bits);
-
-			bits = new BitSet();
-
-		}
-
-		_term_list = null;
-		_skip_pointer = null;
-		_term_position = null;
-		_StopWords = null;
-
-		try {
-
-			writer.writeObject(this);
-			writer.close();
-		} catch (Exception e) {
-			System.out.println(e.toString());
-		}
+		 System.out.println("Indexed " + Integer.toString(_numDocs)
+		 + " docs with " + Long.toString(_totalTermFrequency)
+		 + " terms.");
+		
+		 String indexFile = _options._indexPrefix + "/corpus.idx";
+		 System.out.println("Store index to: " + indexFile);
+		 ObjectOutputStream writer = new ObjectOutputStream(
+		 new FileOutputStream(indexFile));
+		
+		 // temporary vectors
+		 Vector<Integer> list = new Vector<Integer>();
+		 Vector<Integer> skip = new Vector<Integer>();
+		 Vector<Integer> posting = new Vector<Integer>();
+		
+		 BitSet bits = new BitSet();
+		
+		 System.out.println(_dictionary.size());
+		
+		 for (int i : _dictionary.values()) {
+		 // get the term position list and skip pointer
+		 list = _term_list.get(i);
+		 skip = _skip_pointer.get(i);
+		
+		 // create final posting for term
+		 posting = update_skip(skip, skip.size());
+		 posting.addAll(list);
+		
+		 bits = elias_encode(posting, i);
+		
+		 _postings.put(i, bits);
+		
+		 bits = new BitSet();
+		
+		 }
+		
+		 _term_list = null;
+		 _skip_pointer = null;
+		 _term_position = null;
+		 _StopWords = null;
+		
+		 try {
+		
+		 writer.writeObject(this);
+		 writer.close();
+		 } catch (Exception e) {
+		 System.out.println(e.toString());
+		 }
 
 	}
 
@@ -265,7 +329,7 @@ public class IndexerInvertedCompressed extends Indexer implements Serializable {
 		String business_id = s.next();
 		String url = s.next();
 		String title = s.next();
-		title= title.replace("\n", "");
+		title = title.replace("\n", "");
 		Double lati = s.nextDouble();
 		Double longi = s.nextDouble();
 		Double stars = s.nextDouble();
@@ -292,21 +356,21 @@ public class IndexerInvertedCompressed extends Indexer implements Serializable {
 			likes = s.nextInt();
 			text = s.next();
 			doc_string.append(text + " ");
-//			if (likes >= 4) {
-//				for (int j = 0; j < Math.log(likes) * log_2 - 1; j++)
-//					doc_string.append(text + " ");
-//			}
+			// if (likes >= 4) {
+			// for (int j = 0; j < Math.log(likes) * log_2 - 1; j++)
+			// doc_string.append(text + " ");
+			// }
 		}
 		int t3_size = s.nextInt();
-		
+
 		for (int i = 0; i < t3_size; i++) {
 			likes = s.nextInt();
 			text = s.next();
 			doc_string.append(text + " ");
-//			if (likes >= 4) {
-//				for (int j = 0; j < Math.log(likes + 1) * log_2 - 1; j++)
-//					doc_string.append(text + " ");
-//			}
+			// if (likes >= 4) {
+			// for (int j = 0; j < Math.log(likes + 1) * log_2 - 1; j++)
+			// doc_string.append(text + " ");
+			// }
 		}
 
 		document_tf = readTermVector(
@@ -317,19 +381,24 @@ public class IndexerInvertedCompressed extends Indexer implements Serializable {
 		// DocumentIndexed doc = new DocumentIndexed(_documents.size());
 
 		DocumentIndexed doc = new DocumentIndexed(_documents.size());
+		_b_id_to_doc_id.put(business_id, _documents.size());
 
 		doc.set_business_id(business_id);
 
 		if (url.toLowerCase().equals("none")) {
 			String suffix = title.replaceAll("[^a-zA-Z ]", "").toLowerCase()
 					.replaceAll(" ", "-")
-					+ "-" + city.replaceAll("[^a-zA-Z ]", "").toLowerCase().replaceAll(" ", "-");
+					+ "-"
+					+ city.replaceAll("[^a-zA-Z ]", "").toLowerCase()
+							.replaceAll(" ", "-");
 			url = "http://www.yelp.com/biz/" + suffix;
 			doc.setUrl(url);
 		} else {
 			doc.setUrl(url);
 		}
 
+
+		
 		doc.set_num_Reviews(t3_size);
 		doc.setTitle(title);
 		doc.set_lati(lati);
@@ -451,6 +520,7 @@ public class IndexerInvertedCompressed extends Indexer implements Serializable {
 		System.out.println("Load index from: " + indexFile);
 
 		// read in the index file
+
 		ObjectInputStream reader = new ObjectInputStream(new FileInputStream(
 				indexFile));
 		IndexerInvertedCompressed loaded = (IndexerInvertedCompressed) reader
@@ -469,6 +539,8 @@ public class IndexerInvertedCompressed extends Indexer implements Serializable {
 		this._termCorpusFrequency = loaded._termCorpusFrequency;
 		this._termDocFrequency = loaded._termDocFrequency;
 		this.elias = loaded.elias;
+		this._b_id_to_doc_id = loaded._b_id_to_doc_id;
+		this._similarities = loaded._similarities;
 
 		reader.close();
 		loaded = null;
@@ -804,6 +876,11 @@ public class IndexerInvertedCompressed extends Indexer implements Serializable {
 			return positions_indx != -1 ? Pt.get(positions_indx - 1) : 0;
 		}
 		return 0;
+	}
+	
+	public Vector<Tuple<Double, Integer>> get_similardoc(int docid)
+	{
+		return _similarities.get(docid);
 	}
 
 }

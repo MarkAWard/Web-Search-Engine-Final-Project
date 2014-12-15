@@ -49,9 +49,10 @@ public abstract class Ranker {
    * Processes one query.
    * @param query the parsed user query
    * @param numResults number of results to return
+ * @param _nearme 
    * @return Up to {@code numResults} scored documents in ranked order
    */
-  public abstract Vector<ScoredDocument> runQuery(Query query, int numResults, double longitude, double latitude);
+  public abstract Vector<ScoredDocument> runQuery(Query query, int numResults, double longitude, double latitude, Boolean _findsim);
 
   /**
    * All Rankers must be created through this factory class based on the
