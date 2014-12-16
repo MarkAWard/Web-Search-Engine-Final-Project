@@ -42,7 +42,6 @@ public class RankerComprehensive extends Ranker {
 				query._tokens.remove(term);
 		}
 		if (query._tokens.size() == 0) {
-			System.out.println("")
 			return NoResults();
 		}	
 

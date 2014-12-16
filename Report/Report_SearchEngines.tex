@@ -255,18 +255,41 @@ In this case documents with perfect tier 1 score are considered and rest are ass
 \paragraph{}The final querying mode we call Also Liked. In this mode, one will again search for a specific business by name and the results will be the business that was searched for along with a list of businesses that were liked by users who also liked the business that was searched for. Again, the businesses that are returned will all be close to each other. The input location to the search will not affect the results returned but it can be used to automatically adjust the map.
  
 \section{Evaluation}
-Query that we tested upon are shown in the table below.
+For each region we collected 10 queries (Yelp top searches) and calculated the metrics. Some of the queries that we tested upon are shown in the table below along with the region.
 
 
-Figures 1-4 represent the Evaluation. Figure 1 and Figure 2 shows the Accuracy and NDCG at 5 for the queries in different regions.
-Figure 3 and Figure 4 show the average Accuracy and NDCG for all the queries tested.
+Figures 1-4 represent the Evaluation. Figure 1 and Figure 2 shows the Accuracy and DCG at 5 for the queries in different regions.
+Figure 3 and Figure 4 show the average Accuracy and DCG for all the queries tested.
 
 \begin{table}[h!]
 
 \centering
-\begin{tabular}{|l|}
+\begin{tabular}{|l|l|}
 \hline
-\textbf{Query} \\ \hline
+Location & \textbf{Query} \\ \hline
+New York & Italian restaurant \\ \hline
+ & Brunch  \\ \hline
+ & Ramen  \\ \hline
+ & RoofTop Bars  \\ \hline
+ & Yoga   \\ \hline
+ 
+ Boston & Thai  \\ \hline
+ & Cheap Motels   \\ \hline
+ & Gym  \\ \hline
+ & Coffee  \\ \hline
+& Steak House  \\ \hline
+
+Las Vegas & Pizza  \\ \hline
+& Live Music Venues  \\ \hline
+& Furniture Stores  \\ \hline
+& Dance Classes  \\ \hline
+
+Madison & Chinese Restaurants  \\ \hline
+& Sushi  \\ \hline
+& Dog Grooming  \\ \hline
+& Indian Food  \\ \hline
+& Asian Grocery Stores  \\ \hline
+
 
 \end{tabular}
 \end{table}
@@ -279,7 +302,7 @@ Figure 3 and Figure 4 show the average Accuracy and NDCG for all the queries tes
 \end{minipage}
 \begin{minipage}{.5\linewidth}
 \includegraphics[scale=0.6]{NDCG.png}
-\caption{NDCG at 5}
+\caption{DCG at 5}
 \end{minipage}
 \end{figure}
 
@@ -291,14 +314,24 @@ Figure 3 and Figure 4 show the average Accuracy and NDCG for all the queries tes
 \end{minipage}
 \begin{minipage}{.5\linewidth}
 \centering
-\includegraphics[scale=0.6]{AvgNDCG.png}
-\caption{Average NDCG}
+\includegraphics[scale=0.6]{AvgNDCG-2.png}
+\caption{Average DCG}
 \end{minipage}
 \end{figure} 
 
 \section{Result}
 The project dealt with businesses provided in the Yelp data. For efficient web indexing, business, reviews, user and tip parts of the data were used. We made an effort to provide search results to a user that are not only pertinent to the query but are also accessible to the user in terms of the location.
+We found that the TCR-score ranking performed best for our query set. The average DCG at 5 was
 As part of the future work, we would scale up the system to incorporate bigger dataset and perform semantic analysis of the query.
+
+\vspace{40mm}
+
+
+
+
+
+
+
 
 \bibliographystyle{IEEEtran}      
 \bibliography{sample}

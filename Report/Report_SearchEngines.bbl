@@ -46,4 +46,8 @@ G.~Sidorov, A.~Gelbukh, H.~G{\'o}mez-Adorno, and D.~Pinto, ``Soft similarity
   and soft cosine measure: Similarity of features in vector space model,''
   \emph{Computaci{\'o}n y Sistemas}, vol.~18, no.~3, 2014.
 
+\bibitem{hav}
+C.~Robusto, ``The cosine-haversine formula,'' \emph{American Mathematical
+  Monthly}, pp. 38--40, 1957.
+
 \end{thebibliography}
