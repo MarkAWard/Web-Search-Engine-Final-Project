@@ -26,4 +26,4 @@ To Do:
   * ~~AZ, NYC, NJ, Boston, Amherst~~
   * Clean files ``` sed 's/"\|,\|\[\|\]//g' ```
   * ~~Create index to store these~~
-  * Query for business: return business, similars, and users also liked 
+  * ~~Query for business: return business, similars, and users also liked~~ 
